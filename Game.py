@@ -39,6 +39,7 @@ MAIN_FONT = pygame.font.SysFont('comicsans', 50)
 LOST_FONT = pygame.font.SysFont('comicsans', 60)
 LEVEL_FONT = pygame.font.SysFont('comicsans', 65)
 BIG_FONT = pygame.font.SysFont('comicsans', 75)
+SMALL_FONT = pygame.font.SysFont('comicsans', 35)
 
 GIFT_MAP = {
     "double_shooter": DOUBLE_SHOOTER,
@@ -193,7 +194,11 @@ def start(user_name, difficulty):
         # Create a new, better and more enemies for the next level
         for i in range(wave_length):
             enemy_random_pos_x = random.randrange(30, WIDTH - 80)
-            enemy_random_pos_y = random.randrange(max(-2500, -1500 - (level * (50 + dif))), - 100)
+            if level == 1:
+                # More time for the player to read the instructions
+                enemy_random_pos_y = random.randrange(-1800, -700 - 20*dif)
+            else:
+                enemy_random_pos_y = random.randrange(max(-2500, -1500 - (level * (50 + dif))), - 100)
             random_color = random.choice(['red', 'blue', 'green'])
 
             rnd_factor = random.uniform(0.8, 1 + (dif/25))
@@ -202,7 +207,7 @@ def start(user_name, difficulty):
 
         random_gift = random.choice(['health', 'life', 'double_shooter', 'more_speed', 'yellow_arrow', 'automatic'])
         gift_random_pos_x = random.randrange(30, WIDTH - 80)
-        gift_random_pos_y = random.randrange(-1200, -200)
+        gift_random_pos_y = random.randrange(-1500, -400)
         gift = Gift(gift_random_pos_x, gift_random_pos_y, enemy_vel, random_gift)
         gifts.append(gift)
 
@@ -228,7 +233,15 @@ def start(user_name, difficulty):
         if just_begin:
             level_label = BIG_FONT.render("Good Luck {}".format(user_name), 1, WHITE)  # Create level label
             middle_of_screen = int(WIDTH / 2 - level_label.get_width() / 2)
-            WIN.blit(level_label, (middle_of_screen, int(HEIGHT / 2 - 50)))  # Display label in the middle
+            WIN.blit(level_label, (middle_of_screen, int(HEIGHT / 2 - 150)))  # Display label in the middle
+
+            dif_label = SMALL_FONT.render("Difficulty: {}".format(dif), 1, WHITE)  # Create difficulty label
+            middle_of_screen = int(WIDTH / 2 - dif_label.get_width() / 2)
+            WIN.blit(dif_label, (middle_of_screen, int(HEIGHT / 2 + 50)))  # Display label in the middle
+
+            ins_label = SMALL_FONT.render("Use the arrows to move and space to shoot", 1, WHITE)  # Create instructions label
+            middle_of_screen = int(WIDTH / 2 - ins_label.get_width() / 2)
+            WIN.blit(ins_label, (middle_of_screen, int(HEIGHT / 2 +100)))  # Display label in the middle
 
         # Display the current level on the screen
         elif level_up:
@@ -257,7 +270,7 @@ def start(user_name, difficulty):
         redraw_window()  # Draw window
 
         if just_begin:
-            if begin_count > FPS * 3:
+            if begin_count > FPS * 4.5:
                 just_begin = False
             else:
                 begin_count += 1
