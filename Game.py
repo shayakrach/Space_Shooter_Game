@@ -38,7 +38,7 @@ AUTOMATIC = pygame.image.load(os.path.join('assets', 'automatic_small.icon.png')
 MAIN_FONT = pygame.font.SysFont('comicsans', 50)
 LOST_FONT = pygame.font.SysFont('comicsans', 60)
 LEVEL_FONT = pygame.font.SysFont('comicsans', 65)
-BIG_FONT = pygame.font.SysFont('comicsans', 75)
+LARGE_FONT = pygame.font.SysFont('comicsans', 75)
 SMALL_FONT = pygame.font.SysFont('comicsans', 35)
 
 GIFT_MAP = {
@@ -48,9 +48,14 @@ GIFT_MAP = {
     'automatic': AUTOMATIC
 }
 
+DIF_MAP = {
+    "hard": 9,
+    "normal": 5,
+    "easy": 1
+}
 
 def start(user_name, difficulty):
-    dif = int(difficulty)
+    dif = DIF_MAP[difficulty]
     run = True
     just_begin = True
     begin_count = 0
@@ -231,11 +236,11 @@ def start(user_name, difficulty):
         # draw player
         player.draw(WIN)
         if just_begin:
-            level_label = BIG_FONT.render("Good Luck {}".format(user_name), 1, WHITE)  # Create level label
+            level_label = LARGE_FONT.render("Good luck {}".format(user_name), 1, WHITE)  # Create level label
             middle_of_screen = int(WIDTH / 2 - level_label.get_width() / 2)
             WIN.blit(level_label, (middle_of_screen, int(HEIGHT / 2 - 150)))  # Display label in the middle
 
-            dif_label = SMALL_FONT.render("Difficulty: {}".format(dif), 1, WHITE)  # Create difficulty label
+            dif_label = SMALL_FONT.render("Difficulty: {}".format(difficulty), 1, WHITE)  # Create difficulty label
             middle_of_screen = int(WIDTH / 2 - dif_label.get_width() / 2)
             WIN.blit(dif_label, (middle_of_screen, int(HEIGHT / 2 + 50)))  # Display label in the middle
 

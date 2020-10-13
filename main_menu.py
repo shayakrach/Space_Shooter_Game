@@ -13,6 +13,7 @@ pygame.font.init()
 TITLE_FONT = pygame.font.Font(None, 45)
 NAME_FONT = pygame.font.Font(None, 55)
 SMALL_TITLE_FONT = pygame.font.Font(None, 40)
+LARGE_FONT = pygame.font.Font(None, 60)
 middle_height = int(HEIGHT / 2 - 50)
 
 user_text = ''
@@ -48,34 +49,55 @@ def add_to_db(dif, score):
 def main_menu():
     global user_text
     run = True
-    # rect_width = 200
-    middle_width = int(WIDTH / 2)
-    # input_rect = pygame.Rect(middle_width, middle_height - 100, rect_width, 40)
+    rect_width = 150
+    rect_height = 150
+    MIDDLE_WIDTH = int(WIDTH / 2)
+    hard_rect = pygame.Rect(int(MIDDLE_WIDTH + rect_width), middle_height+200, rect_width,rect_height)
+    normal_rect = pygame.Rect(int(MIDDLE_WIDTH - rect_width/2), middle_height+200, rect_width,rect_height)
+    easy_rect = pygame.Rect(int(MIDDLE_WIDTH - 2*rect_width), middle_height+200, rect_width,rect_height)
 
-    # color = pygame.Color('lightskyblue3')
+    color = pygame.Color('lightskyblue3')
 
     while run:
-        WIN.blit(BG, (0, 0))  # Display background
-
-        # User name rectangle input
-        # pygame.draw.rect(WIN, color, input_rect, 2)
+        WIN.blit((BG), (0, 0))  # Display background
 
         # Name input
         text_surface = NAME_FONT.render(user_text, True, WHITE)
-        WIN.blit(text_surface, (int(middle_width - text_surface.get_width() / 2.5 + 100), middle_height - 70))
-        # input_rect.w = max(180, text_surface.get_width() + 10)
+        WIN.blit(text_surface, (int(MIDDLE_WIDTH - text_surface.get_width() / 3 - 40), middle_height - 70))
 
         # Labels
         name_label = TITLE_FONT.render("Enter your name: ", 1, WHITE)  # Create begin label
-        WIN.blit(name_label, (middle_width, middle_height - 150))  # Display label in the middle
+        WIN.blit(name_label,
+                 (int(MIDDLE_WIDTH - name_label.get_width() / 2), middle_height - 150))  # Display label in the middle
 
-        start_game_label = TITLE_FONT.render("Click <1-9> to start the game", 1, WHITE)  # Create begin label
-        middle_width = int(WIDTH / 2 - start_game_label.get_width() / 2)
-        WIN.blit(start_game_label, (middle_width, middle_height + 100))  # Display label in the middle
+        if len(user_text) > 1:
+            start_game_label = TITLE_FONT.render("Click on the desire difficulty", 1, WHITE)  # Create begin label
+            middle_width = int(WIDTH / 2 - start_game_label.get_width() / 2)
+            WIN.blit(start_game_label, (middle_width, middle_height + 100))  # Display label in the middle
+
+            pygame.draw.rect(WIN, color, easy_rect, 3)
+            easy_label = LARGE_FONT.render("Easy", 1, color)  # Create hard label
+            WIN.blit(easy_label,(easy_rect.x + 25,easy_rect.y + 60))  # Display label in the middle
+
+            pygame.draw.rect(WIN, color, normal_rect, 3)
+            normal_label = NAME_FONT.render("Normal", 1, color)  # Create hard label
+            WIN.blit(normal_label, (normal_rect.x + 10, normal_rect.y + 60))  # Display label in the middle
+
+            pygame.draw.rect(WIN, color, hard_rect, 3)
+            hard_label = LARGE_FONT.render("Hard", 1, color)  # Create hard label
+            WIN.blit(hard_label, (hard_rect.x + 25, hard_rect.y + 60))  # Display label in the middle
+
+
+
+
+
+
+        '''
 
         difficulty_game_label = TITLE_FONT.render("1-easy, ... , 9-hard", 1, WHITE)  # Create begin label
         middle_width = int(WIDTH / 2 - difficulty_game_label.get_width() / 2)
         WIN.blit(difficulty_game_label, (middle_width, middle_height + 150))  # Display label in the middle
+        '''
 
         # Refresh the display
         pygame.display.update()
@@ -83,13 +105,24 @@ def main_menu():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-            if event.type == pygame.KEYDOWN:
-                if event.key in [pygame.K_9, pygame.K_8, pygame.K_7, pygame.K_6, pygame.K_5, pygame.K_4, pygame.K_3,
-                                 pygame.K_2, pygame.K_1]:
-                    dif, new_record = Game.start(user_text, event.unicode)
+
+            if event.type == pygame.MOUSEBUTTONDOWN and user_text != '':
+                if easy_rect.collidepoint(event.pos):
+                    dif, new_record = Game.start(user_text, 'easy')
                     add_to_db(dif, new_record)
-                    after_game_menu(dif, new_record)
+                    after_game_menu(new_record)
                     run = False
+                if normal_rect.collidepoint(event.pos):
+                    dif, new_record = Game.start(user_text, 'normal')
+                    add_to_db(dif, new_record)
+                    after_game_menu(new_record)
+                    run = False
+                if hard_rect.collidepoint(event.pos):
+                    dif, new_record = Game.start(user_text, 'hard')
+                    add_to_db(dif, new_record)
+                    after_game_menu(new_record)
+                    run = False
+            if event.type == pygame.KEYDOWN:
                 if len(user_text) < 20:
                     if event.unicode.isalpha() or event.key == pygame.K_SPACE:
                         user_text += event.unicode
@@ -99,7 +132,7 @@ def main_menu():
     pygame.quit()
 
 
-def after_game_menu(dif, record):
+def after_game_menu(record):
     run = True
     is_new_record = False
     current_score_label = None
