@@ -8,6 +8,7 @@ DOUBLE_SHOOTER = pygame.image.load(os.path.join('assets', 'double_shooter.png'))
 QUESTION_MARK = pygame.image.load(os.path.join('assets', 'question_mark.png'))
 MORE_SPEED = pygame.image.load(os.path.join('assets', 'more_speed.png'))
 YELLOW_ARROW = pygame.image.load(os.path.join('assets', 'yellow_arrow.png'))
+AUTOMATIC = pygame.image.load(os.path.join('assets', 'automatic.png'))
 
 
 class Gift:
@@ -16,7 +17,9 @@ class Gift:
         "life": LIFE,
         "double_shooter": DOUBLE_SHOOTER,
         "more_speed": MORE_SPEED,
-        "yellow_arrow": YELLOW_ARROW
+        "yellow_arrow": YELLOW_ARROW,
+        "automatic": AUTOMATIC
+
     }
 
     def __init__(self, x, y, vel, typ):

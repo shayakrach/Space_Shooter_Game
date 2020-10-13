@@ -32,21 +32,27 @@ LIFE = pygame.image.load(os.path.join('assets', 'heart.png'))
 DOUBLE_SHOOTER = pygame.image.load(os.path.join('assets', 'double_shooter_small_icon.png'))
 MORE_SPEED = pygame.image.load(os.path.join('assets', 'more_speed_small_icon.png'))
 YELLOW_ARROW = pygame.image.load(os.path.join('assets', 'yellow_arrow_small_icon.png'))
+AUTOMATIC = pygame.image.load(os.path.join('assets', 'automatic_small.icon.png'))
 
 # Types of fonts
 MAIN_FONT = pygame.font.SysFont('comicsans', 50)
 LOST_FONT = pygame.font.SysFont('comicsans', 60)
 LEVEL_FONT = pygame.font.SysFont('comicsans', 65)
+BIG_FONT = pygame.font.SysFont('comicsans', 75)
 
 GIFT_MAP = {
     "double_shooter": DOUBLE_SHOOTER,
     "more_speed": MORE_SPEED,
-    "yellow_arrow": YELLOW_ARROW
+    "yellow_arrow": YELLOW_ARROW,
+    'automatic': AUTOMATIC
 }
 
 
-def start():
+def start(user_name, difficulty):
+    dif = int(difficulty)
     run = True
+    just_begin = True
+    begin_count = 0
     level = 0  # player start level
     lives = 5  # player start lives
 
@@ -56,8 +62,8 @@ def start():
     # Set the number and velocity of the enemies
     enemies = []
     dead_enemies = []
-    wave_length = 2
-    enemy_vel = 1
+    wave_length = int(dif/2 + 3)
+    enemy_vel = 0.9 + (dif/100)
 
     # Make player instance start in position
     player = Player(PLAYER_POSITION_X, PLAYER_POSITION_Y, PLAYER_VEL)
@@ -112,14 +118,14 @@ def start():
         player.move_lasers(enemies, HEIGHT, dead_enemies)
 
     def activate_enemies():
-        nonlocal lives, player_gifts
+        nonlocal lives, player_gifts, dif
 
         for enemy in enemies[:]:
             enemy.move()
             enemy.move_lasers(player, HEIGHT)
 
-            # Set probability this enemy will shoot on the player
-            if random.randrange(0, 3 * FPS) == 1:
+            # Set probability this enemy will shoot on the player depend on the difficulty
+            if random.randrange(0, int(3 * FPS / (1 + dif/30))) == 1:
                 enemy.shoot()
 
             # The enemy collided with the player
@@ -136,6 +142,7 @@ def start():
                 player.change_vel(PLAYER_VEL)
                 player_gifts = []
                 enemies.remove(enemy)
+                player.reset_cool_down_timer()
 
         for enemy in dead_enemies[:]:
             enemy.move_lasers(player, HEIGHT)
@@ -157,6 +164,8 @@ def start():
                         player.change_vel(8)
                     if gift.get_type() == 'yellow_arrow':
                         player.change_laser('yellow_arrow')
+                    if gift.get_type() == 'automatic':
+                        player.change_to_automate()
                     if gift.get_type() not in player_gifts:
                         player_gifts.append(gift.get_type())
 
@@ -166,10 +175,11 @@ def start():
                 gifts.remove(gift)
 
     def activate_new_level():
-        nonlocal level, wave_length, enemy_vel, lives, level_up, level_count
+        nonlocal level, wave_length, enemy_vel, lives, level_up, level_count, dif
         level += 1
-        wave_length += 3
-        enemy_vel = min(enemy_vel + (enemy_vel * (0.1 / level)), 1.6)  # increase enemy velocity every level till 1.6
+        wave_length += 1 + int(dif/2)
+        # increase enemy velocity every level till some limit, depend on the difficulty
+        enemy_vel = min(enemy_vel + (enemy_vel * (0.1 / level)), 1.5 + (dif/20))
 
         # After every 5 levels the player get extra lives and health
         if level % 5 == 0:
@@ -183,14 +193,14 @@ def start():
         # Create a new, better and more enemies for the next level
         for i in range(wave_length):
             enemy_random_pos_x = random.randrange(30, WIDTH - 80)
-            enemy_random_pos_y = random.randrange(max(-2500, -1500 - (level * 50)), -100)
+            enemy_random_pos_y = random.randrange(max(-2500, -1500 - (level * (50 + dif))), - 100)
             random_color = random.choice(['red', 'blue', 'green'])
 
-            rnd_factor = random.uniform(0.8, 1.2)
+            rnd_factor = random.uniform(0.8, 1 + (dif/25))
             enemy = Enemy(enemy_random_pos_x, enemy_random_pos_y, random_color, enemy_vel * rnd_factor)
             enemies.append(enemy)
 
-        random_gift = random.choice(['health', 'life', 'double_shooter', 'more_speed', 'yellow_arrow'])
+        random_gift = random.choice(['health', 'life', 'double_shooter', 'more_speed', 'yellow_arrow', 'automatic'])
         gift_random_pos_x = random.randrange(30, WIDTH - 80)
         gift_random_pos_y = random.randrange(-1200, -200)
         gift = Gift(gift_random_pos_x, gift_random_pos_y, enemy_vel, random_gift)
@@ -215,9 +225,13 @@ def start():
 
         # draw player
         player.draw(WIN)
+        if just_begin:
+            level_label = BIG_FONT.render("Good Luck {}".format(user_name), 1, WHITE)  # Create level label
+            middle_of_screen = int(WIDTH / 2 - level_label.get_width() / 2)
+            WIN.blit(level_label, (middle_of_screen, int(HEIGHT / 2 - 50)))  # Display label in the middle
 
         # Display the current level on the screen
-        if level_up:
+        elif level_up:
             level_label = LEVEL_FONT.render("level {}".format(level), 1, WHITE)  # Create level label
             middle_of_screen = int(WIDTH / 2 - level_label.get_width() / 2)
             WIN.blit(level_label, (middle_of_screen, int(HEIGHT / 2 - 50)))  # Display label in the middle
@@ -242,17 +256,23 @@ def start():
         clock.tick(FPS)  # Run for <FPS> frames per second
         redraw_window()  # Draw window
 
-        # Check if the player lost
-        if lives <= 0 or player.health <= 0:
-            lost = True
-            lost_count += 1
-
-        # Keep showing "You Lost!!" text on the screen for 3 seconds
-        if lost:
-            if lost_count > FPS * 3:
-                run = False
+        if just_begin:
+            if begin_count > FPS * 3:
+                just_begin = False
             else:
-                continue
+                begin_count += 1
+        else:
+            # Check if the player lost
+            if lives <= 0 or player.health <= 0:
+                lost = True
+                lost_count += 1
+
+            # Keep showing "You Lost!!" text on the screen for 3 seconds
+            if lost:
+                if lost_count > FPS * 2.5:
+                    run = False
+                else:
+                    continue
 
         # Create Next level after the player defeat all the enemies
         if len(enemies) == 0 and lives != 0:
