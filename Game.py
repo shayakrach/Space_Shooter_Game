@@ -315,4 +315,4 @@ def start(user_name, difficulty):
     # Calculate player score
     mount_of_left_enemies = min(len(enemies) + 5 - lives, wave_length)
     part_of_killed_enemies = 1 - (mount_of_left_enemies / wave_length)
-    return level + part_of_killed_enemies
+    return dif, level + part_of_killed_enemies

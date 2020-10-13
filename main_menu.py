@@ -1,6 +1,7 @@
 import pygame
 import Game
 import os
+import sqlite3
 
 WIDTH, HEIGHT = 1000, 800
 WHITE = (255, 255, 255)
@@ -15,6 +16,33 @@ SMALL_TITLE_FONT = pygame.font.Font(None, 40)
 middle_height = int(HEIGHT / 2 - 50)
 
 user_text = ''
+
+
+def add_to_db(dif, score):
+    global user_text
+    conn = sqlite3.connect('scores.db')
+
+    c = conn.cursor()
+
+    # need to add a time later
+    '''c.execute("""CREATE TABLE scores (
+                name TEXT,
+                dif INTEGER,
+                score REAL
+                )""")
+    '''
+    if user_text == '':
+        user_text = 'Anonymous'
+    c.execute("INSERT INTO scores VALUES ('{}','{}','{}')".format(user_text, dif, score))
+    conn.commit()
+
+    c.execute("SELECT * FROM scores")
+
+    print(c.fetchmany(13))
+
+    conn.commit()
+
+    conn.close()
 
 
 def main_menu():
@@ -58,8 +86,9 @@ def main_menu():
             if event.type == pygame.KEYDOWN:
                 if event.key in [pygame.K_9, pygame.K_8, pygame.K_7, pygame.K_6, pygame.K_5, pygame.K_4, pygame.K_3,
                                  pygame.K_2, pygame.K_1]:
-                    new_record = Game.start(user_text, event.unicode)
-                    after_game_menu(new_record)
+                    dif, new_record = Game.start(user_text, event.unicode)
+                    add_to_db(dif, new_record)
+                    after_game_menu(dif, new_record)
                     run = False
                 if len(user_text) < 20:
                     if event.unicode.isalpha() or event.key == pygame.K_SPACE:
@@ -70,7 +99,7 @@ def main_menu():
     pygame.quit()
 
 
-def after_game_menu(record):
+def after_game_menu(dif, record):
     run = True
     is_new_record = False
     current_score_label = None
@@ -107,13 +136,15 @@ def after_game_menu(record):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-            if event.key in [pygame.K_9, pygame.K_8, pygame.K_7, pygame.K_6, pygame.K_5, pygame.K_4, pygame.K_3,
-                             pygame.K_2, pygame.K_1]:
-                new_record = Game.start(user_text, event.unicode)
-                # Create current score label
-                current_score_label = SMALL_TITLE_FONT.render("current score: {:.2f}".format(new_record), 1, WHITE)
-                is_new_record = new_record > record
-                record = max(record, new_record)
+            if event.type == pygame.KEYDOWN:
+                if event.key in [pygame.K_9, pygame.K_8, pygame.K_7, pygame.K_6, pygame.K_5, pygame.K_4, pygame.K_3,
+                                 pygame.K_2, pygame.K_1]:
+                    dif, new_record = Game.start(user_text, event.unicode)
+                    add_to_db(dif, new_record)
+                    # Create current score label
+                    current_score_label = SMALL_TITLE_FONT.render("current score: {:.2f}".format(new_record), 1, WHITE)
+                    is_new_record = new_record > record
+                    record = max(record, new_record)
 
 
 main_menu()
