@@ -1,3 +1,6 @@
+from datetime import datetime
+from time import strftime
+
 import pygame
 import Game
 import os
@@ -39,18 +42,20 @@ def add_to_db(mode, score):
                 mode TEXT,
                 score REAL
                 )""")
-
+    
     if user_text == '':
         user_text = 'Anonymous'
-    c.execute("INSERT INTO scores VALUES ('{}','{}','{}')".format(user_text, mode, score))
-    conn.commit()
+        
+    c.execute("INSERT INTO scores VALUES ('{}','{}',{})".format(user_text, mode, score))
 
+    conn.commit()
+    
     c.execute("SELECT * FROM scores")
 
     print(c.fetchmany(13))
-    '''
+    
     conn.commit()
-
+        '''
     conn.close()
 
 def racords_table():
@@ -91,9 +96,10 @@ def draw_main_menu(hard_rect, normal_rect, easy_rect, records_rect, play_rect, b
     records_label = SMALL_TITLE_FONT.render("records", 1,records_color)  # Create hard label
     WIN.blit(records_label, (records_rect.x + 10, records_rect.y + 15))  # Display label in the middle
 
-    pygame.draw.rect(WIN, play_color, play_rect, 2)
-    records_label = SMALL_TITLE_FONT.render("play", 1, play_color)  # Create hard label
-    WIN.blit(records_label, (play_rect.x + 30, play_rect.y + 15))  # Display label in the middle
+    if 4 in borders:
+        pygame.draw.rect(WIN, play_color, play_rect, 2)
+        records_label = SMALL_TITLE_FONT.render("play", 1, play_color)  # Create hard label
+        WIN.blit(records_label, (play_rect.x + 30, play_rect.y + 15))  # Display label in the middle
 
 
     titel_label = font.render("SPACE SHOOTER", 1, WHITE)  # Create begin label
@@ -200,7 +206,6 @@ def main_menu():
     normal_rect = pygame.Rect(int(MIDDLE_WIDTH - rect_width / 2), middle_height + 250, rect_width, rect_height)
     easy_rect = pygame.Rect(int(MIDDLE_WIDTH - 2 * rect_width), middle_height + 250, rect_width, rect_height)
 
-
     while run:
         # draw all the labels on the screen
         draw_main_menu(hard_rect, normal_rect, easy_rect, records_rect, play_rect, borders)
@@ -217,7 +222,7 @@ def main_menu():
                 if len(user_text) > 1:
                     if easy_rect.collidepoint(event.pos):
                         mode = 'easy'
-                        borders = [4,0,0]
+                        borders = [4, 0, 0]
                     if normal_rect.collidepoint(event.pos):
                         mode = 'normal'
                         borders = [0, 4, 0]
@@ -236,7 +241,8 @@ def main_menu():
                         user_text += event.unicode
                 if event.key == pygame.K_BACKSPACE:
                     user_text = user_text[:-1]
-
+                    if len(user_text) < 2:
+                        borders = [0, 0, 0]
     pygame.quit()
 
 
