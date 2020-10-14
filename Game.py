@@ -55,10 +55,15 @@ DIF_MAP = {
 }
 
 def start(user_name, mode):
+    # Make the game stays consistent on any device
+    clock = pygame.time.Clock()
+
     dif = DIF_MAP[mode]
     run = True
     just_begin = True
+    Scroll_bg = 0
     begin_count = 0
+
     level = 0  # player start level
     lives = 5  # player start lives
 
@@ -73,9 +78,6 @@ def start(user_name, mode):
 
     # Make player instance start in position
     player = Player(PLAYER_POSITION_X, PLAYER_POSITION_Y, PLAYER_VEL)
-
-    # Make the game stays consistent on any device
-    clock = pygame.time.Clock()
 
     lost = False
     level_up = False
@@ -119,7 +121,6 @@ def start(user_name, mode):
                 player.y = HEIGHT - player.get_height()
         if keys[shoot_key]:  # shoot
             player.shoot()
-
 
     def activate_enemies():
         nonlocal lives, player_gifts, dif
@@ -181,7 +182,6 @@ def start(user_name, mode):
 
             elif gift.get_y_pos() + gift.get_height() > HEIGHT:
                 gifts.remove(gift)
-
 
     def activate_new_level():
         nonlocal level, wave_length, enemy_vel, lives, level_up, level_count, dif
@@ -245,7 +245,7 @@ def start(user_name, mode):
             middle_of_screen = int(WIDTH / 2 - level_label.get_width() / 2)
             WIN.blit(level_label, (middle_of_screen, int(HEIGHT / 2 - 150)))  # Display label in the middle
 
-            dif_label = SMALL_FONT.render("Difficulty: {}".format(mode), 1, WHITE)  # Create difficulty label
+            dif_label = SMALL_FONT.render("Mode: {}".format(mode), 1, WHITE)  # Create difficulty label
             middle_of_screen = int(WIDTH / 2 - dif_label.get_width() / 2)
             WIN.blit(dif_label, (middle_of_screen, int(HEIGHT / 2 + 50)))  # Display label in the middle
 
@@ -255,7 +255,7 @@ def start(user_name, mode):
 
         # Display the current level on the screen
         elif level_up:
-            level_label = LEVEL_FONT.render("level {}".format(level), 1, WHITE)  # Create level label
+            level_label = LEVEL_FONT.render("Level {}".format(level), 1, WHITE)  # Create level label
             middle_of_screen = int(WIDTH / 2 - level_label.get_width() / 2)
             WIN.blit(level_label, (middle_of_screen, int(HEIGHT / 2 - 50)))  # Display label in the middle
 
@@ -275,7 +275,6 @@ def start(user_name, mode):
         # Refresh the display
         pygame.display.update()
 
-    Scroll_bg = 0
     while run:
         clock.tick(FPS)  # Run for <FPS> frames per second
         redraw_window(Scroll_bg)  # Draw window
@@ -305,8 +304,7 @@ def start(user_name, mode):
         # Keep showing "Level <level>" text on the screen for 2 seconds while after thw player finished the last one
         if level_up:
             seconds = 3.5
-
-            if level% 5 == 0:
+            if level % 5 == 0:
                 seconds = 6
                 Scroll_bg += 3
 
@@ -314,8 +312,8 @@ def start(user_name, mode):
                 level_up = False
             else:
                 level_count += 1
+        # Activate all the enemies in this level
         else:
-            # Activate all the enemies in this level
             activate_enemies()
 
         # Activate player movement
@@ -332,9 +330,8 @@ def start(user_name, mode):
             if event.type == pygame.QUIT:
                 quit()
 
-
-
     # Calculate player score
     mount_of_left_enemies = min(len(enemies) + 5 - lives, wave_length)
     part_of_killed_enemies = 1 - (mount_of_left_enemies / wave_length)
-    return level + part_of_killed_enemies
+    score = round(level + part_of_killed_enemies, 2)
+    return score
