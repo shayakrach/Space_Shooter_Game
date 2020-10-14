@@ -28,6 +28,30 @@ user_text = ''
 record = 5
 
 
+def print_records():
+    conn = sqlite3.connect('scores.db')
+
+    c = conn.cursor()
+
+    c.execute("""SELECT *
+                 FROM scores
+                 WHERE mode = 'hard'
+                 ORDER BY score DESC""")
+
+    table = c.fetchmany(6)
+
+    y =300
+    for line in table:
+        x = 300
+        for data in line:
+            data_label = SMALL_TITLE_FONT.render(str(data), 1, WHITE)  # Create hard label
+            WIN.blit(data_label, (x, y))  # Display label in the middle
+            x += 150
+        y += 60
+
+    conn.commit()
+
+    conn.close()
 
 
 def add_to_db(mode, score):
@@ -42,21 +66,16 @@ def add_to_db(mode, score):
                 mode TEXT,
                 score REAL
                 )""")
-    
+    '''
     if user_text == '':
         user_text = 'Anonymous'
         
     c.execute("INSERT INTO scores VALUES ('{}','{}',{})".format(user_text, mode, score))
 
     conn.commit()
-    
-    c.execute("SELECT * FROM scores")
 
-    print(c.fetchmany(13))
-    
-    conn.commit()
-        '''
     conn.close()
+
 
 def racords_table():
 
@@ -64,13 +83,16 @@ def racords_table():
 
     up_bar_color = (163, 128, 222)
     pygame.draw.rect(WIN, up_bar_color, menu_rect, 2)
-    menu_label = SMALL_TITLE_FONT.render("menu", 1, up_bar_color)  # Create hard label
 
 
     while True:
         WIN.blit(BG, (0, 0))  # Display background
         pygame.draw.rect(WIN, up_bar_color, menu_rect, 2)
+        menu_label = SMALL_TITLE_FONT.render("menu", 1, up_bar_color)  # Create hard label
         WIN.blit(menu_label, (menu_rect.x + 20, menu_rect.y + 15))  # Display label in the middle
+
+
+        print_records()
         # Refresh the display
         pygame.display.update()
         # Start the game by moving the mouse or get out
@@ -189,6 +211,8 @@ def after_game_menu(score, mode):
                     add_to_db(mode, score)
                 if menu_rect.collidepoint(event.pos):
                     return True
+                if records_rect.collidepoint(event.pos):
+                    return racords_table()
 
 
 def main_menu():
