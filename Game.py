@@ -54,8 +54,8 @@ DIF_MAP = {
     "easy": 1
 }
 
-def start(user_name, difficulty):
-    dif = DIF_MAP[difficulty]
+def start(user_name, mode):
+    dif = DIF_MAP[mode]
     run = True
     just_begin = True
     begin_count = 0
@@ -120,8 +120,6 @@ def start(user_name, difficulty):
         if keys[shoot_key]:  # shoot
             player.shoot()
 
-        # Activate all the lasers of the player
-        player.move_lasers(enemies, HEIGHT, dead_enemies)
 
     def activate_enemies():
         nonlocal lives, player_gifts, dif
@@ -149,6 +147,10 @@ def start(user_name, difficulty):
                 player_gifts = []
                 enemies.remove(enemy)
                 player.reset_cool_down_timer()
+
+    def activate_lasers():
+        # Activate all the lasers of the player
+        player.move_lasers(enemies, HEIGHT, dead_enemies)
 
         for enemy in dead_enemies[:]:
             enemy.move_lasers(player, HEIGHT)
@@ -179,6 +181,7 @@ def start(user_name, difficulty):
 
             elif gift.get_y_pos() + gift.get_height() > HEIGHT:
                 gifts.remove(gift)
+
 
     def activate_new_level():
         nonlocal level, wave_length, enemy_vel, lives, level_up, level_count, dif
@@ -216,9 +219,11 @@ def start(user_name, difficulty):
         gift = Gift(gift_random_pos_x, gift_random_pos_y, enemy_vel, random_gift)
         gifts.append(gift)
 
-    def redraw_window():
+    def redraw_window(y):
         # Display background
-        WIN.blit(BG, (0, 0))
+        rel_y = y % HEIGHT
+        WIN.blit(BG, (0, rel_y))
+        WIN.blit(BG, (0, rel_y - HEIGHT))
 
         # draw enemies
         for enemy in enemies:
@@ -240,7 +245,7 @@ def start(user_name, difficulty):
             middle_of_screen = int(WIDTH / 2 - level_label.get_width() / 2)
             WIN.blit(level_label, (middle_of_screen, int(HEIGHT / 2 - 150)))  # Display label in the middle
 
-            dif_label = SMALL_FONT.render("Difficulty: {}".format(difficulty), 1, WHITE)  # Create difficulty label
+            dif_label = SMALL_FONT.render("Difficulty: {}".format(mode), 1, WHITE)  # Create difficulty label
             middle_of_screen = int(WIDTH / 2 - dif_label.get_width() / 2)
             WIN.blit(dif_label, (middle_of_screen, int(HEIGHT / 2 + 50)))  # Display label in the middle
 
@@ -270,15 +275,16 @@ def start(user_name, difficulty):
         # Refresh the display
         pygame.display.update()
 
+    Scroll_bg = 0
     while run:
         clock.tick(FPS)  # Run for <FPS> frames per second
-        redraw_window()  # Draw window
-
+        redraw_window(Scroll_bg)  # Draw window
         if just_begin:
             if begin_count > FPS * 4.5:
                 just_begin = False
             else:
                 begin_count += 1
+                Scroll_bg +=2
         else:
             # Check if the player lost
             if lives <= 0 or player.health <= 0:
@@ -298,26 +304,37 @@ def start(user_name, difficulty):
 
         # Keep showing "Level <level>" text on the screen for 2 seconds while after thw player finished the last one
         if level_up:
-            if level_count > FPS * 2.5:
+            seconds = 3.5
+
+            if level% 5 == 0:
+                seconds = 6
+                Scroll_bg += 3
+
+            if level_count > FPS * seconds:
                 level_up = False
             else:
                 level_count += 1
+        else:
+            # Activate all the enemies in this level
+            activate_enemies()
+
+        # Activate player movement
+        activate_player()
+
+        # Activate all lasers
+        activate_lasers()
+
+        # Activate all the remain gifts
+        activate_gifts()
 
         # Close the game when clicking the x button
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 quit()
 
-        # Activate player movement and shooting
-        activate_player()
 
-        # Activate all the enemies in this level
-        activate_enemies()
-
-        # Activate all the remain gifts
-        activate_gifts()
 
     # Calculate player score
     mount_of_left_enemies = min(len(enemies) + 5 - lives, wave_length)
     part_of_killed_enemies = 1 - (mount_of_left_enemies / wave_length)
-    return dif, level + part_of_killed_enemies
+    return level + part_of_killed_enemies

@@ -41,7 +41,7 @@ def add_to_db(dif, score):
     
     c.execute("SELECT * FROM scores")
     '''
-    print(c.fetchmany(13))
+    # print(c.fetchmany(13))
 
     conn.commit()
 
@@ -50,6 +50,7 @@ def add_to_db(dif, score):
 
 def main_menu():
     global user_text
+    mode = None
     run = True
     rect_width = 150
     rect_height = 150
@@ -58,23 +59,20 @@ def main_menu():
     normal_rect = pygame.Rect(int(MIDDLE_WIDTH - rect_width/2), middle_height+200, rect_width,rect_height)
     easy_rect = pygame.Rect(int(MIDDLE_WIDTH - 2*rect_width), middle_height+200, rect_width,rect_height)
 
-
-
-    hard_color = (255,0,0)
+    hard_color = (255, 0, 0)
     normal_color = (255, 189, 34)
-    easy_color =(80, 245, 68)
+    easy_color = (80, 245, 68)
 
     while run:
         WIN.blit(BG, (0, 0))  # Display background
 
-        # Name input
-        text_surface = NAME_FONT.render(user_text, True, WHITE)
-        WIN.blit(text_surface, (int(MIDDLE_WIDTH - text_surface.get_width() / 3 - 35), middle_height - 70))
-
         # Labels
         name_label = TITLE_FONT.render("Enter your name: ", 1, WHITE)  # Create begin label
-        WIN.blit(name_label,
-                 (int(MIDDLE_WIDTH - name_label.get_width() / 2), middle_height - 150))  # Display label in the middle
+        WIN.blit(name_label,(int(MIDDLE_WIDTH - name_label.get_width() / 2), middle_height - 150))  # Display label in the middle
+
+        # Name input
+        text_surface = NAME_FONT.render(user_text, True, WHITE)
+        WIN.blit(text_surface, (int(MIDDLE_WIDTH - text_surface.get_width() / 2.5 - 25), middle_height - 70))
 
         if len(user_text) > 1:
             start_game_label = TITLE_FONT.render("Click on the desire difficulty", 1, WHITE)  # Create begin label
@@ -93,15 +91,6 @@ def main_menu():
             hard_label = LARGE_FONT.render("Hard", 1, hard_color)  # Create hard label
             WIN.blit(hard_label, (hard_rect.x + 25, hard_rect.y + 60))  # Display label in the middle
 
-
-
-        '''
-
-        difficulty_game_label = TITLE_FONT.render("1-easy, ... , 9-hard", 1, WHITE)  # Create begin label
-        middle_width = int(WIDTH / 2 - difficulty_game_label.get_width() / 2)
-        WIN.blit(difficulty_game_label, (middle_width, middle_height + 150))  # Display label in the middle
-        '''
-
         # Refresh the display
         pygame.display.update()
         # Start the game by moving the mouse or get out
@@ -111,17 +100,15 @@ def main_menu():
 
             if event.type == pygame.MOUSEBUTTONDOWN and len(user_text) > 1:
                 if easy_rect.collidepoint(event.pos):
-                    dif, new_record = Game.start(user_text, 'easy')
-                    add_to_db(dif, new_record)
-                    after_game_menu(new_record)
+                    mode = 'easy'
                 if normal_rect.collidepoint(event.pos):
-                    dif, new_record = Game.start(user_text, 'normal')
-                    add_to_db(dif, new_record)
-                    after_game_menu(new_record)
+                    mode = 'normal'
                 if hard_rect.collidepoint(event.pos):
-                    dif, new_record = Game.start(user_text, 'hard')
-                    add_to_db(dif, new_record)
-                    after_game_menu(new_record)
+                    mode = 'hard'
+                if mode is not None:
+                    score = Game.start(user_text, mode)
+                    add_to_db(1,score)
+                    run = after_game_menu(score,mode)
             if event.type == pygame.KEYDOWN:
                 if len(user_text) < 20:
                     if event.unicode.isalpha() or event.key == pygame.K_SPACE:
@@ -132,10 +119,8 @@ def main_menu():
     pygame.quit()
 
 
-def after_game_menu(score):
-    run = True
-    is_new_record = False
-    current_score_label = None
+def after_game_menu(score, mode):
+
     rect_width = 150
     rect_height = 150
     play_again_rect = pygame.Rect(int(MIDDLE_WIDTH - rect_width/2), middle_height + 200, rect_width, rect_height)
@@ -145,7 +130,7 @@ def after_game_menu(score):
     menu_rect = pygame.Rect(50, 50, 120, 60)
     records_rect = pygame.Rect(WIDTH - 170, 50, 120, 60)
 
-    while run:
+    while True:
         WIN.blit(BG, (0, 0))  # Display background
 
         # Labels
@@ -154,14 +139,14 @@ def after_game_menu(score):
             middle_width = int(WIDTH / 2 - broke_record_label.get_width() / 2)
             WIN.blit(broke_record_label, (middle_width, middle_height - 150))  # Display label in the middle
 
+        mode_label = TITLE_FONT.render("Mode: {}".format(mode), 1, WHITE)  # Create record label
+        middle_width = int(WIDTH / 2 - mode_label.get_width() / 2)
+        WIN.blit(mode_label, (middle_width, middle_height - 60))  # Display label in the middle
+
 
         score_label = TITLE_FONT.render("Score: {:.2f}".format(score), 1, WHITE)  # Create record label
         middle_width = int(WIDTH / 2 - score_label.get_width() / 2)
-        WIN.blit(score_label, (middle_width, middle_height - 100))  # Display label in the middle
-
-        if current_score_label is not None:
-            middle_width = int(WIDTH / 2 - current_score_label.get_width() / 2)
-            WIN.blit(current_score_label, (middle_width, HEIGHT - 70))  # Display label in the middle
+        WIN.blit(score_label, (middle_width, middle_height))  # Display label in the middle
 
 
         pygame.draw.rect(WIN, play_again_color, play_again_rect, 3)
@@ -179,29 +164,17 @@ def after_game_menu(score):
         records_label = SMALL_TITLE_FONT.render("records", 1, up_bar_color)  # Create hard label
         WIN.blit(records_label, (records_rect.x + 10, records_rect.y + 15))  # Display label in the middle
 
-        '''
-        start_game_label = TITLE_FONT.render("Click <1-9> to start the game", 1, WHITE)  # Create begin label
-        middle_width = int(WIDTH / 2 - start_game_label.get_width() / 2)
-        WIN.blit(start_game_label, (middle_width, middle_height + 100))  # Display label in the middle
-        
-        
-        difficulty_game_label = TITLE_FONT.render("1-easy, ... , 9-hard", 1, WHITE)  # Create begin label
-        middle_width = int(WIDTH / 2 - difficulty_game_label.get_width() / 2)
-        WIN.blit(difficulty_game_label, (middle_width, middle_height + 150))  # Display label in the middle
-        
-         '''
         # Refresh the display
         pygame.display.update()
         # Start the game by moving the mouse or get out
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                run = False
+                return False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if play_again_rect.collidepoint(event.pos):
-                    dif, score = Game.start(user_text, 'easy')
-                    add_to_db(dif, score)
-                    current_score_label = SMALL_TITLE_FONT.render("current score: {:.2f}".format(score), 1, WHITE)
+                    score = Game.start(user_text, mode)
+                    add_to_db(mode, score)
                 if menu_rect.collidepoint(event.pos):
-                    run = False
+                    return True
 
 main_menu()
