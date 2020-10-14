@@ -54,6 +54,7 @@ def main_menu_events(hard_rect, normal_rect, easy_rect):
     global user_text
     mode = None
 
+    print("WHAY")
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False
@@ -74,14 +75,15 @@ def main_menu_events(hard_rect, normal_rect, easy_rect):
                     user_text += event.unicode
             if event.key == pygame.K_BACKSPACE:
                 user_text = user_text[:-1]
+    return True
 
 
 def draw_main_menu(hard_rect, normal_rect, easy_rect):
+    WIN.blit(BG, (0, 0))  # Display background
+
     hard_color = (255, 0, 0)
     normal_color = (255, 189, 34)
     easy_color = (80, 245, 68)
-
-    WIN.blit(BG, (0, 0))  # Display background
 
     # Labels
     name_label = TITLE_FONT.render("Enter your name: ", 1, WHITE)  # Create begin label
