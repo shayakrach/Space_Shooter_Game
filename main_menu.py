@@ -1,6 +1,3 @@
-from datetime import datetime
-from time import strftime
-
 import pygame
 import Game
 import os
@@ -15,7 +12,6 @@ BG = pygame.transform.scale(pygame.image.load(os.path.join('assets', 'background
 font = pygame.font.Font(os.path.join('fonts', 'ARCADE.TTF'), 100)
 
 pygame.font.init()
-LARGE_TITLE_FONT = pygame.font.SysFont("Zelda", 100)
 TITLE_FONT = pygame.font.Font(None, 45)
 NAME_FONT = pygame.font.Font(None, 55)
 SMALL_TITLE_FONT = pygame.font.Font(None, 40)
@@ -33,20 +29,33 @@ def print_records():
 
     c = conn.cursor()
 
-    c.execute("""SELECT *
+    c.execute("""SELECT name, score
                  FROM scores
                  WHERE mode = 'hard'
                  ORDER BY score DESC""")
 
-    table = c.fetchmany(6)
+    table = c.fetchmany(5)
 
-    y =300
-    for line in table:
+    y = 300
+    for pos, line in enumerate(table):
         x = 300
-        for data in line:
-            data_label = SMALL_TITLE_FONT.render(str(data), 1, WHITE)  # Create hard label
-            WIN.blit(data_label, (x, y))  # Display label in the middle
-            x += 150
+
+        pos_rect = pygame.Rect(x, y, 50, 60)
+        pygame.draw.rect(WIN, WHITE, pos_rect, 2)
+        pos_label = SMALL_TITLE_FONT.render(str(pos+1), 1, WHITE)  # Create hard label
+        WIN.blit(pos_label, (x+17, y+17))  # Display label in the middle
+
+
+        name_rect = pygame.Rect(x+50, y, 120, 60)
+        pygame.draw.rect(WIN, WHITE, name_rect, 2)
+        name_label = SMALL_TITLE_FONT.render(str(line[0]), 1, WHITE)  # Create hard label
+        WIN.blit(name_label, (x+90, y+15))  # Display label in the middle
+
+        score_rect = pygame.Rect(x+170, y, 100, 60)
+        pygame.draw.rect(WIN, WHITE, score_rect, 2)
+        name_label = SMALL_TITLE_FONT.render(str(line[1]), 1, WHITE)  # Create hard label
+        WIN.blit(name_label, (x+200, y+15))  # Display label in the middle
+
         y += 60
 
     conn.commit()
