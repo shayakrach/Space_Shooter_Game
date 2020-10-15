@@ -19,7 +19,6 @@ class Gift:
         "more_speed": MORE_SPEED,
         "yellow_arrow": YELLOW_ARROW,
         "automatic": AUTOMATIC
-
     }
 
     def __init__(self, x, y, vel, typ):

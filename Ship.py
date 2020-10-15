@@ -13,7 +13,7 @@ class Ship:
         self.ship_img = None
         self.lasers = []
         self.cool_down_counter = 0
-        self.cool_down_time = 30 # The minimum time between shoots
+        self.cool_down_time = 30  # The minimum time between shoots
 
     def draw(self, window):
         window.blit(self.ship_img, (int(self.x), int(self.y)))
@@ -40,8 +40,4 @@ class Ship:
     def get_vel(self):
         return self.vel
 
-    def change_to_automate(self):
-        self.cool_down_time = 15
 
-    def reset_cool_down_timer(self):
-        self.cool_down_time = 30

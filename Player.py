@@ -61,6 +61,11 @@ class Player(Ship):
                 laser = Laser(self.x - 15 + err, self.y, self.laser_type)
                 self.lasers.append(laser)
             else:
+                if self.shooter_type == 'triple_shooter':
+                    laser = Laser(self.x + 60 + err, self.y, self.laser_type + '_plus30')
+                    self.lasers.append(laser)
+                    laser = Laser(self.x - 20 + err, self.y, self.laser_type + '_minus30')
+                    self.lasers.append(laser)
                 laser = Laser(self.x + 20 + err, self.y - 20, self.laser_type)
                 self.lasers.append(laser)
             self.cool_down_counter = 1
@@ -76,3 +81,9 @@ class Player(Ship):
 
     def change_vel(self, vel):
         self.vel = vel
+
+    def change_to_automate(self):
+        self.cool_down_time = 15
+
+    def reset_cool_down_timer(self):
+        self.cool_down_time = 30

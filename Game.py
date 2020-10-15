@@ -168,7 +168,10 @@ def start(user_name, mode):
                     lives += 1
                 else:
                     if gift.get_type() == 'double_shooter':
-                        player.change_shooter('double_shooter')
+                        if player.shooter_type == 'single_shooter':
+                            player.change_shooter('double_shooter')
+                        else:
+                            player.change_shooter('triple_shooter')
                     if gift.get_type() == 'more_speed':
                         player.change_vel(8)
                     if gift.get_type() == 'yellow_arrow':
@@ -305,9 +308,10 @@ def start(user_name, mode):
         # Keep showing "Level <level>" text on the screen for 2 seconds while after thw player finished the last one
         if level_up:
             seconds = 3.5
-            if level % 5 == 0:
+            # scrolling after no enemy laser on the screen
+            if level % 5 == 0 and len(dead_enemies) == 0:
                 seconds = 6
-                Scroll_bg += 3
+                Scroll_bg += 5
 
             if level_count > FPS * seconds:
                 level_up = False
