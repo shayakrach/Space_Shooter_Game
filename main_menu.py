@@ -23,6 +23,10 @@ MIDDLE_WIDTH = int(WIDTH / 2)
 user_text = ''
 
 
+def mid_width(obj):
+    return int(WIDTH / 2 - obj.get_width() / 2)
+
+
 def draw_main_menu(hard_rect, normal_rect, easy_rect, records_rect, play_rect, borders):
     WIN.blit(BG, (0, 0))  # Display background
 
@@ -47,16 +51,15 @@ def draw_main_menu(hard_rect, normal_rect, easy_rect, records_rect, play_rect, b
 
     # Labels
     name_label = TITLE_FONT.render("Enter your name: ", 1, WHITE)  # Create begin label
-    WIN.blit(name_label, (int(MIDDLE_WIDTH - name_label.get_width() / 2), 410))  # Display label in the middle
+    WIN.blit(name_label, (mid_width(name_label), 410))  # Display label in the middle
 
     # Name input
     text_surface = NAME_FONT.render(user_text, True, WHITE)
-    WIN.blit(text_surface, (int(MIDDLE_WIDTH - text_surface.get_width() / 2.2 - 5), 460))
+    WIN.blit(text_surface, (mid_width(text_surface), 460))
 
     if len(user_text) > 1:
         start_game_label = TITLE_FONT.render("Click on the desire difficulty", 1, WHITE)  # Create begin label
-        middle_width = int(WIDTH / 2 - start_game_label.get_width() / 2)
-        WIN.blit(start_game_label, (middle_width, middle_height + 180))  # Display label in the middle
+        WIN.blit(start_game_label, (mid_width(start_game_label), middle_height + 180))  # Display label in the middle
 
         pygame.draw.rect(WIN, easy_color, easy_rect, 2 + borders[0])
         easy_label = LARGE_FONT.render("Easy", 1, easy_color)  # Create hard label
@@ -112,7 +115,7 @@ def main_menu():
                     if play_rect.collidepoint(event.pos) and mode is not None:
                         score = Game.start(user_text, mode)
                         records.add_to_db(user_text, mode, score)
-                        run = secondary_menu.menu(user_text,score, mode)
+                        run = secondary_menu.menu(user_text, score, mode)
                 if records_rect.collidepoint(event.pos):
                     run = records.records_table()
             if event.type == pygame.KEYDOWN:

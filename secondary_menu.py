@@ -20,6 +20,10 @@ middle_height = int(HEIGHT / 2 - 50)
 MIDDLE_WIDTH = int(WIDTH / 2)
 
 
+def mid_width(obj):
+    return int(WIDTH / 2 - obj.get_width() / 2)
+
+
 def draw_menu(play_again_rect, menu_rect, records_rect, score, mode):
     WIN.blit(BG, (0, 0))  # Display background
     play_again_color = (73, 114, 252)
@@ -27,16 +31,13 @@ def draw_menu(play_again_rect, menu_rect, records_rect, score, mode):
     # Labels
     broke_record_label = TITLE_FONT.render("Your broke the record!!", 1, WHITE)  # Create record label
     if score == records.get_record(mode):
-        middle_width = int(WIDTH / 2 - broke_record_label.get_width() / 2)
-        WIN.blit(broke_record_label, (middle_width, middle_height - 150))  # Display label in the middle
+        WIN.blit(broke_record_label, (mid_width(broke_record_label), middle_height - 150))  # Display label in the middle
 
     mode_label = TITLE_FONT.render("Mode: {}".format(mode), 1, WHITE)  # Create record label
-    middle_width = int(WIDTH / 2 - mode_label.get_width() / 2)
-    WIN.blit(mode_label, (middle_width, middle_height - 60))  # Display label in the middle
+    WIN.blit(mode_label, (mid_width(mode_label), middle_height - 60))  # Display label in the middle
 
     score_label = TITLE_FONT.render("Score: {}".format(score), 1, WHITE)  # Create record label
-    middle_width = int(WIDTH / 2 - score_label.get_width() / 2)
-    WIN.blit(score_label, (middle_width, middle_height))  # Display label in the middle
+    WIN.blit(score_label, (mid_width(score_label), middle_height))  # Display label in the middle
 
     pygame.draw.rect(WIN, play_again_color, play_again_rect, 3)
     play_label = LARGE_FONT.render("Play", 1, play_again_color)  # Create hard label
@@ -53,7 +54,7 @@ def draw_menu(play_again_rect, menu_rect, records_rect, score, mode):
     WIN.blit(records_label, (records_rect.x + 10, records_rect.y + 15))  # Display label in the middle
 
 
-def menu(name ,score, mode):
+def menu(name, score, mode):
     rect_width = 150
     rect_height = 150
 

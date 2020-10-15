@@ -4,9 +4,9 @@
 from Ship import *
 
 # Ships images
-RED_SPACE_SHIP = pygame.image.load(os.path.join('assets', 'pixel_ship_red_small.png'))
-GREEN_SPACE_SHIP = pygame.image.load(os.path.join('assets', 'pixel_ship_green_small.png'))
-BLUE_SPACE_SHIP = pygame.image.load(os.path.join('assets', 'pixel_ship_blue_small.png'))
+RED_SPACE_SHIP = pygame.image.load(os.path.join('assets', 'red_ship.png'))
+GREEN_SPACE_SHIP = pygame.image.load(os.path.join('assets', 'green_ship.png'))
+BLUE_SPACE_SHIP = pygame.image.load(os.path.join('assets', 'blue_ship.png'))
 
 # Lasers images
 RED_LASER = pygame.image.load(os.path.join('assets', 'pixel_laser_red.png'))
@@ -34,10 +34,7 @@ class Enemy(Ship):
     # Override 'shoot' function from the super class to fix blue ship shoot
     def shoot(self):
         if self.cool_down_counter == 0:
-            if self.color == "blue":
-                laser = Laser(self.x - self.get_width() / 2, self.y, self.laser_type)
-            else:
-                laser = Laser(self.x - 15, self.y, self.laser_type)
+            laser = Laser(self.x - 7, self.y, self.laser_type)
             self.lasers.append(laser)
             self.cool_down_counter = 1
 

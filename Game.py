@@ -100,25 +100,25 @@ def start(user_name, mode):
 
         # Change the position of the ship without crossing the corners
         if keys[left_key]:  # move left
-            if player.x - player.get_vel() > 0:
+            if player.x - player.get_vel() > -10:
                 player.x -= player.get_vel()
             else:
-                player.x = 0
+                player.x = -10
         if keys[right_key]:  # move right
-            if player.x + player.get_vel() + player.get_width() < WIDTH:
+            if player.x + player.get_vel() + player.get_width() - 10 < WIDTH:
                 player.x += player.get_vel()
             else:
-                player.x = WIDTH - player.get_width()
+                player.x = WIDTH - player.get_width() + 10
         if keys[up_key]:  # move up
-            if player.y - player.get_vel() > 0:
+            if player.y - player.get_vel() > -10:
                 player.y -= player.get_vel()
             else:
-                player.y = 0
+                player.y = -10
         if keys[down_key]:  # move down
-            if player.y + player.get_vel() + player.get_height() + 10 < HEIGHT:
+            if player.y + player.get_vel() + player.get_height() - 20 < HEIGHT:
                 player.y += player.get_vel()
             else:
-                player.y = HEIGHT - player.get_height()
+                player.y = HEIGHT - player.get_height() + 20
         if keys[shoot_key]:  # shoot
             player.shoot()
 
