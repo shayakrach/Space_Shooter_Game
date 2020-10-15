@@ -45,7 +45,7 @@ class Player(Ship):
 
     # Represent the mount health of the player
     def health_bar(self, window):
-        red_rect = (self.x + 10 , self.y + self.ship_img.get_height() - 15, self.ship_img.get_width() - 18, 10)
+        red_rect = (self.x + 10, self.y + self.ship_img.get_height() - 15, self.ship_img.get_width() - 18, 10)
         pygame.draw.rect(window, RED, red_rect)
         part_of_health = (self.ship_img.get_width() - 18) * (self.health / self.max_health)
         if part_of_health > 0:
@@ -54,13 +54,14 @@ class Player(Ship):
 
     def shoot(self):
         if self.cool_down_counter == 0:
+            err = (12 if self.laser_type == 'yellow_arrow' else 0)
             if self.shooter_type == 'double_shooter':
-                laser = Laser(self.x + 55, self.y, self.laser_type)
+                laser = Laser(self.x + 55 + err, self.y, self.laser_type)
                 self.lasers.append(laser)
-                laser = Laser(self.x-15, self.y, self.laser_type)
+                laser = Laser(self.x - 15 + err, self.y, self.laser_type)
                 self.lasers.append(laser)
             else:
-                laser = Laser(self.x + 20, self.y - 20, self.laser_type)
+                laser = Laser(self.x + 20 + err, self.y - 20, self.laser_type)
                 self.lasers.append(laser)
             self.cool_down_counter = 1
 

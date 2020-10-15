@@ -213,7 +213,8 @@ def start(user_name, mode):
             enemy = Enemy(enemy_random_pos_x, enemy_random_pos_y, random_color, enemy_vel * rnd_factor)
             enemies.append(enemy)
 
-        random_gift = random.choice(['health', 'life', 'double_shooter', 'more_speed', 'yellow_arrow', 'automatic'])
+        random_gift = random.choice(['double_shooter', 'yellow_arrow'])
+        #, 'more_speed', 'automatic', 'health', 'life'
         gift_random_pos_x = random.randrange(30, WIDTH - 80)
         gift_random_pos_y = random.randrange(-1500, -400)
         gift = Gift(gift_random_pos_x, gift_random_pos_y, enemy_vel, random_gift)
