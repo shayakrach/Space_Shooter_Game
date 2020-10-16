@@ -48,7 +48,7 @@ def print_records(mode):
         name_rect = pygame.Rect(x + 50, y, 200, 60)
         pygame.draw.rect(WIN, WHITE, name_rect, 2)
         name_label = SMALL_TITLE_FONT.render(str(line[0]), 1, WHITE)  # Create hard label
-        WIN.blit(name_label, (x + 110, y + 15))  # Display label in the middle
+        WIN.blit(name_label, ((x + 50) + 100 - name_label.get_width()/2, y + 15))  # Display label in the middle
 
         score_rect = pygame.Rect(x + 250, y, 100, 60)
         pygame.draw.rect(WIN, WHITE, score_rect, 2)
