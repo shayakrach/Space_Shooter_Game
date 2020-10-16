@@ -4,7 +4,7 @@ import random
 
 HEALTH = pygame.image.load(os.path.join('assets', 'health.png'))
 LIFE = pygame.image.load(os.path.join('assets', 'medium_heart.png'))
-DOUBLE_SHOOTER = pygame.image.load(os.path.join('assets', 'double_shooter.png'))
+MORE_SHOOTER = pygame.image.load(os.path.join('assets', 'more_shooter.png'))
 QUESTION_MARK = pygame.image.load(os.path.join('assets', 'question_mark.png'))
 MORE_SPEED = pygame.image.load(os.path.join('assets', 'more_speed.png'))
 YELLOW_ARROW = pygame.image.load(os.path.join('assets', 'yellow_arrow.png'))
@@ -15,7 +15,7 @@ class Gift:
     GIFT_MAP = {
         "health": HEALTH,
         "life": LIFE,
-        "double_shooter": DOUBLE_SHOOTER,
+        "more_shooter": MORE_SHOOTER,
         "more_speed": MORE_SPEED,
         "yellow_arrow": YELLOW_ARROW,
         "automatic": AUTOMATIC

@@ -114,8 +114,9 @@ def main_menu():
                         borders = [0, 0, 4]
                     if play_rect.collidepoint(event.pos) and mode is not None:
                         score = Game.start(user_text, mode)
-                        records.add_to_db(user_text, mode, score)
-                        run = secondary_menu.menu(user_text, score, mode)
+                        if score != 0:
+                            records.add_to_db(user_text, mode, score)
+                            run = secondary_menu.menu(user_text, score, mode)
                 if records_rect.collidepoint(event.pos):
                     run = records.records_table()
             if event.type == pygame.KEYDOWN:

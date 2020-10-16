@@ -74,6 +74,8 @@ def menu(name, score, mode):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if play_again_rect.collidepoint(event.pos):
                     score = Game.start(name, mode)
+                    if score == 0:
+                        return True
                     records.add_to_db(name, mode, score)
                 if menu_rect.collidepoint(event.pos):
                     return True

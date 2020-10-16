@@ -30,6 +30,7 @@ BG = pygame.transform.scale(pygame.image.load(os.path.join('assets', 'background
 # Small icons
 LIFE = pygame.image.load(os.path.join('assets', 'heart.png'))
 DOUBLE_SHOOTER = pygame.image.load(os.path.join('assets', 'double_shooter_small_icon.png'))
+TRIPLE_SHOOTER = pygame.image.load(os.path.join('assets', 'triple_shooter_small_icon.png'))
 MORE_SPEED = pygame.image.load(os.path.join('assets', 'more_speed_small_icon.png'))
 YELLOW_ARROW = pygame.image.load(os.path.join('assets', 'yellow_arrow_small_icon.png'))
 AUTOMATIC = pygame.image.load(os.path.join('assets', 'automatic_small.icon.png'))
@@ -43,6 +44,7 @@ SMALL_FONT = pygame.font.SysFont('comicsans', 35)
 
 GIFT_MAP = {
     "double_shooter": DOUBLE_SHOOTER,
+    "triple_shooter": TRIPLE_SHOOTER,
     "more_speed": MORE_SPEED,
     "yellow_arrow": YELLOW_ARROW,
     'automatic': AUTOMATIC
@@ -69,6 +71,7 @@ def start(user_name, mode):
 
     gifts = []
     player_gifts = []
+    automatic_level = 0
 
     # Set the number and velocity of the enemies
     enemies = []
@@ -157,7 +160,7 @@ def start(user_name, mode):
             enemy.move_lasers(player, HEIGHT)
 
     def activate_gifts():
-        nonlocal lives
+        nonlocal lives, automatic_level
 
         for gift in gifts[:]:
             gift.move()
@@ -166,18 +169,22 @@ def start(user_name, mode):
                     player.increase_health()
                 elif gift.get_type() == 'life':
                     lives += 1
+                elif gift.get_type() == 'more_shooter':
+                    if player.get_shooter() == 'single_shooter':
+                        player.change_shooter('double_shooter')
+                    elif player.get_shooter() == 'double_shooter':
+                        player_gifts.remove('double_shooter')
+                        player.change_shooter('triple_shooter')
+                    if player.get_shooter() not in player_gifts:
+                        player_gifts.append(player.get_shooter())
                 else:
-                    if gift.get_type() == 'double_shooter':
-                        if player.shooter_type == 'single_shooter':
-                            player.change_shooter('double_shooter')
-                        else:
-                            player.change_shooter('triple_shooter')
                     if gift.get_type() == 'more_speed':
                         player.change_vel(8)
                     if gift.get_type() == 'yellow_arrow':
                         player.change_laser('yellow_arrow')
                     if gift.get_type() == 'automatic':
                         player.change_to_automate()
+                        automatic_level = level
                     if gift.get_type() not in player_gifts:
                         player_gifts.append(gift.get_type())
 
@@ -198,6 +205,11 @@ def start(user_name, mode):
             lives = min(10, lives + 1)
             player.increase_health()
 
+        if 'automatic' in player_gifts and level - automatic_level > 2:
+            player_gifts.remove('automatic')
+            player.reset_cool_down_timer()
+
+
         # Reset the counter time of level label
         level_up = True
         level_count = 0
@@ -216,8 +228,7 @@ def start(user_name, mode):
             enemy = Enemy(enemy_random_pos_x, enemy_random_pos_y, random_color, enemy_vel * rnd_factor)
             enemies.append(enemy)
 
-        random_gift = random.choice(['double_shooter', 'yellow_arrow'])
-        #, 'more_speed', 'automatic', 'health', 'life'
+        random_gift = random.choice(['automatic','yellow_arrow', 'more_speed', 'more_shooter', 'health', 'life'])
         gift_random_pos_x = random.randrange(30, WIDTH - 80)
         gift_random_pos_y = random.randrange(-1500, -400)
         gift = Gift(gift_random_pos_x, gift_random_pos_y, enemy_vel, random_gift)
@@ -317,6 +328,7 @@ def start(user_name, mode):
                 level_up = False
             else:
                 level_count += 1
+
         # Activate all the enemies in this level
         else:
             activate_enemies()
@@ -334,6 +346,9 @@ def start(user_name, mode):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return 0
 
     # Calculate player score
     mount_of_left_enemies = min(len(enemies) + 5 - lives, wave_length)

@@ -73,6 +73,9 @@ class Player(Ship):
     def increase_health(self):
         self.health = min(self.max_health, self.health + 40)
 
+    def get_shooter(self):
+        return self.shooter_type
+
     def change_shooter(self, shooter_type):
         self.shooter_type = shooter_type
 
