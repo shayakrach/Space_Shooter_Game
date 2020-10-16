@@ -63,7 +63,7 @@ def menu(name, score, mode):
     records_rect = pygame.Rect(WIDTH - 170, 50, 120, 60)
 
     while True:
-        draw_menu(play_again_rect, menu_rect, records_rect,score, mode)
+        draw_menu(play_again_rect, menu_rect, records_rect, score, mode)
         # Refresh the display
         pygame.display.update()
         # Start the game by moving the mouse or get out
@@ -80,4 +80,4 @@ def menu(name, score, mode):
                 if menu_rect.collidepoint(event.pos):
                     return True
                 if records_rect.collidepoint(event.pos):
-                    return records.records_table(mode)
+                    records.records_table(mode)

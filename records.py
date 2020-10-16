@@ -124,8 +124,8 @@ def records_table(sent_mode=None):
         titel_label = font.render("RECORDS", 1, WHITE)  # Create begin label
         WIN.blit(titel_label, (int(MIDDLE_WIDTH - titel_label.get_width() / 2), 80))  # Display label in the middle
         pygame.draw.rect(WIN, up_bar_color, menu_rect, 2)
-        menu_label = SMALL_TITLE_FONT.render("menu", 1, up_bar_color)  # Create hard label
-        WIN.blit(menu_label, (menu_rect.x + 20, menu_rect.y + 15))  # Display label in the middle
+        menu_label = SMALL_TITLE_FONT.render("back", 1, up_bar_color)  # Create hard label
+        WIN.blit(menu_label, (menu_rect.x + 25, menu_rect.y + 20))  # Display label in the middle
 
         pygame.draw.rect(WIN, easy_color, easy_rect, 2 + borders[0])
         easy_label = LARGE_FONT.render("Easy", 1, easy_color)  # Create hard label
