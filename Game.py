@@ -35,10 +35,12 @@ MORE_SPEED = pygame.image.load(os.path.join('assets', 'more_speed_small_icon.png
 YELLOW_ARROW = pygame.image.load(os.path.join('assets', 'yellow_arrow_small_icon.png'))
 AUTOMATIC = pygame.image.load(os.path.join('assets', 'automatic_small.icon.png'))
 
+
+
 # Types of fonts
 MAIN_FONT = pygame.font.SysFont('comicsans', 50)
 LOST_FONT = pygame.font.SysFont('comicsans', 60)
-LEVEL_FONT = pygame.font.SysFont('comicsans', 65)
+LEVEL_FONT = pygame.font.Font(os.path.join('fonts', 'gomarice_game_continue_02.ttf'), 65)
 LARGE_FONT = pygame.font.SysFont('comicsans', 75)
 SMALL_FONT = pygame.font.SysFont('comicsans', 35)
 

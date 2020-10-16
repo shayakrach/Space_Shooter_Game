@@ -19,8 +19,6 @@ LARGE_FONT = pygame.font.Font(None, 60)
 middle_height = int(HEIGHT / 2 - 50)
 MIDDLE_WIDTH = int(WIDTH / 2)
 
-
-
 def print_records(mode):
     conn = sqlite3.connect('scores.db')
 
@@ -33,14 +31,14 @@ def print_records(mode):
 
     table = c.fetchmany(3)
 
-    pos_rect = pygame.Rect(300, 240, 350, 60)
+    pos_rect = pygame.Rect(320, 240, 350, 60)
     pygame.draw.rect(WIN, WHITE, pos_rect, 2)
     mode_label = SMALL_TITLE_FONT.render(mode, 1, WHITE)  # Create hard label
-    WIN.blit(mode_label, (420, 260))  # Display label in the middle
+    WIN.blit(mode_label, (int(490 -mode_label.get_width()/2) , 260))  # Display label in the middle
 
     y = 300
     for pos, line in enumerate(table):
-        x = 300
+        x = 320
 
         pos_rect = pygame.Rect(x, y, 50, 60)
         pygame.draw.rect(WIN, WHITE, pos_rect, 2)
@@ -55,7 +53,7 @@ def print_records(mode):
         score_rect = pygame.Rect(x + 250, y, 100, 60)
         pygame.draw.rect(WIN, WHITE, score_rect, 2)
         name_label = SMALL_TITLE_FONT.render(str(line[1]), 1, WHITE)  # Create hard label
-        WIN.blit(name_label, (x + 290, y + 15))  # Display label in the middle
+        WIN.blit(name_label, (x + 275, y + 17))  # Display label in the middle
 
         y += 60
 
