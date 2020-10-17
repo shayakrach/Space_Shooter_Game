@@ -14,8 +14,6 @@ WIDTH, HEIGHT = 1000, 800
 WHITE = (255, 255, 255)
 FPS = 70  # frames per second
 
-# Load windows game
-WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 PLAYER_POSITION_X, PLAYER_POSITION_Y = WIDTH / 2 - 50, HEIGHT - 120
 
 # Sensitive of the press keys for each movement
@@ -23,9 +21,6 @@ PLAYER_VEL = 5
 
 # Set the name on the upper part of the window
 pygame.display.set_caption("Space Shooter Game")
-
-# Background
-BG = pygame.transform.scale(pygame.image.load(os.path.join('assets', 'background-black.png')), (WIDTH, HEIGHT))
 
 # Small icons
 LIFE = pygame.image.load(os.path.join('assets', 'heart.png'))
@@ -59,6 +54,12 @@ DIF_MAP = {
 }
 
 def start(user_name, mode):
+    # Load windows game
+    WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+
+    # Background
+    BG = pygame.transform.scale(pygame.image.load(os.path.join('assets', 'background-black.png')), (WIDTH, HEIGHT))
+
     # Make the game stays consistent on any device
     clock = pygame.time.Clock()
 
@@ -237,7 +238,7 @@ def start(user_name, mode):
         gifts.append(gift)
 
     def redraw_window(y):
-        # Display background
+
         rel_y = y % HEIGHT
         WIN.blit(BG, (0, rel_y))
         WIN.blit(BG, (0, rel_y - HEIGHT))
