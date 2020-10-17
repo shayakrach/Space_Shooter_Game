@@ -4,11 +4,9 @@ import os
 import records
 import secondary_menu
 
-WIDTH, HEIGHT = 1000, 800
+
 WHITE = (255, 255, 255)
 
-WIN = pygame.display.set_mode((WIDTH, HEIGHT))
-BG = pygame.transform.scale(pygame.image.load(os.path.join('assets', 'background-black.png')), (WIDTH, HEIGHT))
 
 pygame.font.init()
 font = pygame.font.Font(os.path.join('fonts', 'ARCADE.TTF'), 100)
@@ -17,18 +15,23 @@ NAME_FONT = pygame.font.Font(os.path.join('fonts', 'FreshLychee-mLoK2.ttf'), 55)
 
 SMALL_TITLE_FONT = pygame.font.Font(None, 40)
 LARGE_FONT = pygame.font.Font(None, 55)
-middle_height = int(HEIGHT / 2 - 50)
-MIDDLE_WIDTH = int(WIDTH / 2)
 
 user_text = ''
 
 
-def mid_width(obj):
-    return int(WIDTH / 2 - obj.get_width() / 2)
-
-
 def draw_main_menu(hard_rect, normal_rect, easy_rect, records_rect):
+    WIDTH, HEIGHT = 1000, 800
+    WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+    BG = pygame.transform.scale(pygame.image.load(os.path.join('assets', 'background-black.png')), (WIDTH, HEIGHT))
+
     WIN.blit(BG, (0, 0))  # Display background
+
+    middle_height = int(HEIGHT / 2 - 50)
+
+
+    def mid_width(obj):
+        return int(WIDTH / 2 - obj.get_width() / 2)
+
 
     # play_color = (73, 114, 252)
     records_color = (163, 128, 222)
@@ -41,8 +44,7 @@ def draw_main_menu(hard_rect, normal_rect, easy_rect, records_rect):
     WIN.blit(records_label, (records_rect.x + 10, records_rect.y + 15))  # Display label in the middle
 
     titel_label = font.render("SPACE SHOOTER", 1, WHITE)  # Create begin label
-    WIN.blit(titel_label,
-             (int(MIDDLE_WIDTH - titel_label.get_width() / 2), 80))  # Display label in the middle
+    WIN.blit(titel_label, (mid_width(titel_label), 80))  # Display label in the middle
 
     # Labels
     name_label = TITLE_FONT.render("Enter your name: ", 1, WHITE)  # Create begin label
@@ -76,6 +78,8 @@ def main_menu():
     rect_height = 150
     mode = None
 
+    MIDDLE_WIDTH = 500
+    middle_height = 350
     # play_rect = pygame.Rect(MIDDLE_WIDTH - 60, 280, 120, 60)
     # Creating all the mode rectangles
 
@@ -109,6 +113,7 @@ def main_menu():
                         if score != 0:
                             records.add_to_db(user_text, mode, score)
                             run = secondary_menu.menu(user_text, score, mode)
+                        mode = None
                 if records_rect.collidepoint(event.pos):
                     run = records.records_table()
                     mode = None

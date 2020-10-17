@@ -2,11 +2,9 @@ import pygame
 import os
 import sqlite3
 
-WIDTH, HEIGHT = 1000, 800
+
 WHITE = (255, 255, 255)
 
-WIN = pygame.display.set_mode((WIDTH, HEIGHT))
-BG = pygame.transform.scale(pygame.image.load(os.path.join('assets', 'background-black.png')), (WIDTH, HEIGHT))
 
 font = pygame.font.Font(os.path.join('fonts', 'ARCADE.TTF'), 100)
 
@@ -15,11 +13,9 @@ TITLE_FONT = pygame.font.Font(None, 45)
 NAME_FONT = pygame.font.Font(None, 55)
 SMALL_TITLE_FONT = pygame.font.Font(None, 40)
 LARGE_FONT = pygame.font.Font(None, 60)
-middle_height = int(HEIGHT / 2 - 50)
-MIDDLE_WIDTH = int(WIDTH / 2)
 
 
-def print_records(mode):
+def print_records(mode,WIN):
     conn = sqlite3.connect('scores.db')
 
     c = conn.cursor()
@@ -100,14 +96,17 @@ def add_to_db(name, mode, score):
 
 
 def records_table(sent_mode=None):
+    WIDTH, HEIGHT = 1000, 800
+    WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+    BG = pygame.transform.scale(pygame.image.load(os.path.join('assets', 'background-black.png')), (WIDTH, HEIGHT))
     mode = sent_mode
     rect_width = 150
     rect_height = 150
 
     menu_rect = pygame.Rect(50, 50, 120, 60)
-    hard_rect = pygame.Rect(int(MIDDLE_WIDTH + rect_width), middle_height + 250, rect_width, rect_height)
-    normal_rect = pygame.Rect(int(MIDDLE_WIDTH - rect_width / 2), middle_height + 250, rect_width, rect_height)
-    easy_rect = pygame.Rect(int(MIDDLE_WIDTH - 2 * rect_width), middle_height + 250, rect_width, rect_height)
+    hard_rect = pygame.Rect(int(WIDTH / 2 + rect_width), int(HEIGHT / 2 +200), rect_width, rect_height)
+    normal_rect = pygame.Rect(int(WIDTH / 2 - rect_width / 2), int(HEIGHT / 2 +200), rect_width, rect_height)
+    easy_rect = pygame.Rect(int(WIDTH / 2- 2 * rect_width), int(HEIGHT / 2 +200), rect_width, rect_height)
 
     hard_color = (255, 0, 0)
     normal_color = (255, 189, 34)
@@ -122,7 +121,7 @@ def records_table(sent_mode=None):
         WIN.blit(BG, (0, 0))  # Display background
 
         titel_label = font.render("RECORDS", 1, WHITE)  # Create begin label
-        WIN.blit(titel_label, (int(MIDDLE_WIDTH - titel_label.get_width() / 2), 80))  # Display label in the middle
+        WIN.blit(titel_label, (int(WIDTH / 2 - titel_label.get_width() / 2), 80))  # Display label in the middle
         pygame.draw.rect(WIN, up_bar_color, menu_rect, 2)
         menu_label = SMALL_TITLE_FONT.render("back", 1, up_bar_color)  # Create hard label
         WIN.blit(menu_label, (menu_rect.x + 25, menu_rect.y + 20))  # Display label in the middle
@@ -140,7 +139,7 @@ def records_table(sent_mode=None):
         WIN.blit(hard_label, (hard_rect.x + 25, hard_rect.y + 60))  # Display label in the middle
 
         if mode is not None:
-            print_records(mode)
+            print_records(mode,WIN)
         # Refresh the display
         pygame.display.update()
         # Start the game by moving the mouse or get out

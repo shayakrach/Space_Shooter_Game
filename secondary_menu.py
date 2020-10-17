@@ -3,11 +3,8 @@ import os
 import Game
 import records
 
-WIDTH, HEIGHT = 1000, 800
-WHITE = (255, 255, 255)
 
-WIN = pygame.display.set_mode((WIDTH, HEIGHT))
-BG = pygame.transform.scale(pygame.image.load(os.path.join('assets', 'background-black.png')), (WIDTH, HEIGHT))
+WHITE = (255, 255, 255)
 
 pygame.font.init()
 font = pygame.font.Font(os.path.join('fonts', 'ARCADE.TTF'), 100)
@@ -20,16 +17,16 @@ LARGE_FONT = pygame.font.Font(None, 60)
 RECORD_FONT = pygame.font.Font(os.path.join('fonts', 'ARCADECLASSIC.TTF'), 50)
 
 
-
-middle_height = int(HEIGHT / 2 - 50)
-MIDDLE_WIDTH = int(WIDTH / 2)
-
-
-def mid_width(obj):
-    return int(WIDTH / 2 - obj.get_width() / 2)
-
-
 def draw_menu(play_again_rect, menu_rect, records_rect, score, mode):
+
+    WIDTH, HEIGHT = 1000, 800
+    middle_height = int(HEIGHT / 2 - 50)
+
+    def mid_width(obj):
+        return int(WIDTH / 2 - obj.get_width() / 2)
+
+    WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+    BG = pygame.transform.scale(pygame.image.load(os.path.join('assets', 'background-black.png')), (WIDTH, HEIGHT))
     WIN.blit(BG, (0, 0))  # Display background
     play_again_color = (73, 114, 252)
     up_bar_color = (163, 128, 222)
@@ -63,9 +60,9 @@ def menu(name, score, mode):
     rect_width = 150
     rect_height = 150
 
-    play_again_rect = pygame.Rect(int(MIDDLE_WIDTH - rect_width / 2), middle_height + 200, rect_width, rect_height)
+    play_again_rect = pygame.Rect(int(500 - rect_width / 2), 550, rect_width, rect_height)
     menu_rect = pygame.Rect(50, 50, 120, 60)
-    records_rect = pygame.Rect(WIDTH - 170, 50, 120, 60)
+    records_rect = pygame.Rect(830, 50, 120, 60)
 
     while True:
         draw_menu(play_again_rect, menu_rect, records_rect, score, mode)
