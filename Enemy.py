@@ -47,12 +47,15 @@ class Enemy(Ship):
         for laser in self.lasers:
             laser.draw(window)
 
-    def move_lasers(self, obj, max_height):
+    def move_lasers(self, objs, max_height):
         self.cool_down()
         for laser in self.lasers:
             laser.move()
             if laser.off_screen(max_height):
                 self.lasers.remove(laser)
-            elif laser.collision(obj):
-                obj.health = max(obj.health - 10, 0)
-                self.lasers.remove(laser)
+            else:
+                for obj in objs:
+                    if laser.collision(obj):
+                        obj.health = max(obj.health - 10, 0)
+                        self.lasers.remove(laser)
+                        break

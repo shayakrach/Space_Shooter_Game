@@ -3,8 +3,16 @@
 
 from Ship import *
 
-# Yellow ship and laser images
-YELLOW_SPACE_SHIP = pygame.image.load(os.path.join('assets', 'yellow_ship.png'))
+SHIP = {
+    'yellow': {
+        'img' : pygame.image.load(os.path.join('assets', 'yellow_ship.png')),
+        'laser_type' : 'yellow_laser'
+    },
+    'white': {
+        'img' : pygame.image.load(os.path.join('assets', 'white_ship.png')),
+        'laser_type': 'white_laser'
+    }
+}
 
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
@@ -12,10 +20,11 @@ RED = (255, 0, 0)
 
 class Player(Ship):
 
-    def __init__(self, x, y, vel):
+    def __init__(self, x, y, vel, color):
         super().__init__(x, y, vel)
-        self.ship_img = YELLOW_SPACE_SHIP
-        self.laser_type = 'yellow_laser'
+        self.color = color
+        self.ship_img = SHIP[color]['img']
+        self.laser_type = SHIP[color]['laser_type']
         self.mask = pygame.mask.from_surface(self.ship_img)
         self.max_health = self.health
         self.shooter_type = 'single_shooter'
@@ -54,7 +63,7 @@ class Player(Ship):
 
     def shoot(self):
         if self.cool_down_counter == 0:
-            err = (12 if self.laser_type == 'yellow_arrow' else 0)
+            err = (12 if 'arrow' in self.laser_type else 0)
             if self.shooter_type == 'double_shooter':
                 laser = Laser(self.x + 55 + err, self.y, self.laser_type)
                 self.lasers.append(laser)

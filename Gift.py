@@ -17,7 +17,7 @@ class Gift:
         "life": LIFE,
         "more_shooter": MORE_SHOOTER,
         "more_speed": MORE_SPEED,
-        "yellow_arrow": YELLOW_ARROW,
+        "arrow": YELLOW_ARROW,
         "automatic": AUTOMATIC
     }
 

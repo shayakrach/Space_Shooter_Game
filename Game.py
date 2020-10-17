@@ -10,7 +10,7 @@ from Gift import *
 
 pygame.font.init()
 
-WIDTH, HEIGHT = 1000, 800
+WIDTH, HEIGHT = 1500, 800
 WHITE = (255, 255, 255)
 FPS = 70  # frames per second
 
@@ -32,12 +32,29 @@ AUTOMATIC = pygame.image.load(os.path.join('assets', 'automatic_small.icon.png')
 
 
 # Types of fonts
-MAIN_FONT = pygame.font.SysFont('comicsans', 50)
 LOST_FONT = pygame.font.Font(os.path.join('fonts', 'JustMyType-KePl.ttf'), 60)
 LEVEL_FONT = pygame.font.Font(os.path.join('fonts', 'gomarice_game_continue_02.ttf'), 65)
 LARGE_FONT = pygame.font.Font(os.path.join('fonts', 'FreshLychee-mLoK2.ttf'), 70)
 SMALL_FONT = pygame.font.Font(os.path.join('fonts', 'JustMyType-KePl.ttf'), 35)
 
+PLAYER = {
+    0: {
+        'left_key': pygame.K_LEFT,
+        'right_key': pygame.K_RIGHT,
+        'up_key': pygame.K_UP,
+        'down_key': pygame.K_DOWN,
+        'shoot_key': pygame.K_SPACE,
+        'color': 'yellow'
+    },
+    1: {
+        'left_key': pygame.K_s,
+        'right_key': pygame.K_f,
+        'up_key': pygame.K_e,
+        'down_key': pygame.K_d,
+        'shoot_key': pygame.K_q,
+        'color': 'yellow'
+    }
+}
 
 GIFT_MAP = {
     "double_shooter": DOUBLE_SHOOTER,
@@ -52,6 +69,7 @@ DIF_MAP = {
     "normal": 5,
     "easy": 1
 }
+
 
 def start(user_name, mode):
     # Load windows game
@@ -69,11 +87,14 @@ def start(user_name, mode):
     Scroll_bg = 0
     begin_count = 0
 
-    level = 0  # player start level
-    lives = 5  # player start lives
+    level = 0  # player[i] start level
+    lives = 5  # player[i] start lives
 
     gifts = []
-    player_gifts = []
+    player_gift = {
+        0: [],
+        1: []
+    }
     automatic_level = 0
 
     # Set the number and velocity of the enemies
@@ -82,8 +103,10 @@ def start(user_name, mode):
     wave_length = int(dif/2 + 3)
     enemy_vel = 0.9 + (dif/100)
 
-    # Make player instance start in position
-    player = Player(PLAYER_POSITION_X, PLAYER_POSITION_Y, PLAYER_VEL)
+    # Make player[i] instance start in position
+    player = []
+    player.append(Player(PLAYER_POSITION_X - 250, PLAYER_POSITION_Y, PLAYER_VEL, 'yellow'))
+    player.append(Player(PLAYER_POSITION_X + 250, PLAYER_POSITION_Y, PLAYER_VEL, 'white'))
 
     lost = False
     level_up = False
@@ -92,44 +115,44 @@ def start(user_name, mode):
     lost_count = 0
     level_count = 0
 
-    def activate_player():
+    def activate_player(i):
 
         # Pressed keys
-        left_key = pygame.K_LEFT
-        right_key = pygame.K_RIGHT
-        up_key = pygame.K_UP
-        down_key = pygame.K_DOWN
-        shoot_key = pygame.K_SPACE
+        left_key = PLAYER[i]['left_key']
+        right_key = PLAYER[i]['right_key']
+        up_key = PLAYER[i]['up_key']
+        down_key = PLAYER[i]['down_key']
+        shoot_key = PLAYER[i]['shoot_key']
 
         # Control the pressed keys
         keys = pygame.key.get_pressed()
 
         # Change the position of the ship without crossing the corners
         if keys[left_key]:  # move left
-            if player.x - player.get_vel() > -10:
-                player.x -= player.get_vel()
+            if player[i].x - player[i].get_vel() > -10:
+                player[i].x -= player[i].get_vel()
             else:
-                player.x = -10
+                player[i].x = -10
         if keys[right_key]:  # move right
-            if player.x + player.get_vel() + player.get_width() - 10 < WIDTH:
-                player.x += player.get_vel()
+            if player[i].x + player[i].get_vel() + player[i].get_width() - 10 < WIDTH:
+                player[i].x += player[i].get_vel()
             else:
-                player.x = WIDTH - player.get_width() + 10
+                player[i].x = WIDTH - player[i].get_width() + 10
         if keys[up_key]:  # move up
-            if player.y - player.get_vel() > -10:
-                player.y -= player.get_vel()
+            if player[i].y - player[i].get_vel() > -10:
+                player[i].y -= player[i].get_vel()
             else:
-                player.y = -10
+                player[i].y = -10
         if keys[down_key]:  # move down
-            if player.y + player.get_vel() + player.get_height() - 20 < HEIGHT:
-                player.y += player.get_vel()
+            if player[i].y + player[i].get_vel() + player[i].get_height() - 20 < HEIGHT:
+                player[i].y += player[i].get_vel()
             else:
-                player.y = HEIGHT - player.get_height() + 20
+                player[i].y = HEIGHT - player[i].get_height() + 20
         if keys[shoot_key]:  # shoot
-            player.shoot()
+            player[i].shoot()
 
     def activate_enemies():
-        nonlocal lives, player_gifts, dif
+        nonlocal lives, player_gift, dif
 
         for enemy in enemies[:]:
             enemy.move()
@@ -139,25 +162,31 @@ def start(user_name, mode):
             if random.randrange(0, int(3 * FPS / (1 + dif/30))) == 1:
                 enemy.shoot()
 
-            # The enemy collided with the player
-            if collide(enemy, player):
-                player.health = max(player.health - 20, 0)
-                dead_enemies.append(enemy)
-                enemies.remove(enemy)
+            # The enemy collided with the player[i]
+            for i in range(len(player)):
+                if collide(enemy, player[i]):
+                    player[i].health = max(player[i].health - 20, 0)
+                    dead_enemies.append(enemy)
+                    enemies.remove(enemy)
+                    break
 
-            # The player missed the enemy
-            elif enemy.get_y_pos() + enemy.get_height() > HEIGHT:
-                lives -= 1
-                player.change_shooter('single_shooter')
-                player.change_laser('yellow_laser')
-                player.change_vel(PLAYER_VEL)
-                player_gifts = []
-                enemies.remove(enemy)
-                player.reset_cool_down_timer()
+                # The player[i] missed the enemy
+            if enemy in enemies:
+                if enemy.get_y_pos() + enemy.get_height() > HEIGHT:
+                    for i in range(len(player)):
+                        player[i].change_shooter('single_shooter')
+                        player[i].change_laser(player[i].color + '_laser')
+                        player[i].change_vel(PLAYER_VEL)
+                        player[i].reset_cool_down_timer()
+                    # player_gift = []
+                    lives -= 1
+                    enemies.remove(enemy)
+
 
     def activate_lasers():
-        # Activate all the lasers of the player
-        player.move_lasers(enemies, HEIGHT, dead_enemies)
+        # Activate all the lasers of the player[i]
+        for i in range(len(player)):
+            player[i].move_lasers(enemies, HEIGHT, dead_enemies)
 
         for enemy in dead_enemies[:]:
             enemy.move_lasers(player, HEIGHT)
@@ -167,34 +196,37 @@ def start(user_name, mode):
 
         for gift in gifts[:]:
             gift.move()
-            if collide(gift, player):
-                if gift.get_type() == 'health':
-                    player.increase_health()
-                elif gift.get_type() == 'life':
-                    lives += 1
-                elif gift.get_type() == 'more_shooter':
-                    if player.get_shooter() == 'single_shooter':
-                        player.change_shooter('double_shooter')
-                    elif player.get_shooter() == 'double_shooter':
-                        player_gifts.remove('double_shooter')
-                        player.change_shooter('triple_shooter')
-                    if player.get_shooter() not in player_gifts:
-                        player_gifts.append(player.get_shooter())
-                else:
-                    if gift.get_type() == 'more_speed':
-                        player.change_vel(8)
-                    if gift.get_type() == 'yellow_arrow':
-                        player.change_laser('yellow_arrow')
-                    if gift.get_type() == 'automatic':
-                        player.change_to_automate()
-                        automatic_level = level
-                    if gift.get_type() not in player_gifts:
-                        player_gifts.append(gift.get_type())
+            for i in range(len(player)):
+                if collide(gift, player[i]):
+                    if gift.get_type() == 'health':
+                        player[i].increase_health()
+                    elif gift.get_type() == 'life':
+                        lives += 1
+                    elif gift.get_type() == 'more_shooter':
+                        if player[i].get_shooter() == 'single_shooter':
+                            player[i].change_shooter('double_shooter')
+                        elif player[i].get_shooter() == 'double_shooter':
+                            player_gift[i].remove('double_shooter')
+                            player[i].change_shooter('triple_shooter')
+                        if player[i].get_shooter() not in player_gift[i]:
+                            player_gift[i].append(player[i].get_shooter())
+                    else:
+                        if gift.get_type() == 'more_speed':
+                            player[i].change_vel(8)
+                        if gift.get_type() == 'arrow':
+                            player[i].change_laser(player[i].color + '_arrow')
+                        if gift.get_type() == 'automatic':
+                            player[i].change_to_automate()
+                            automatic_level = level
+                        if gift.get_type() not in player_gift[i]:
+                            player_gift[i].append(gift.get_type())
 
-                gifts.remove(gift)
+                    gifts.remove(gift)
+                    return
 
-            elif gift.get_y_pos() + gift.get_height() > HEIGHT:
-                gifts.remove(gift)
+                elif gift.get_y_pos() + gift.get_height() > HEIGHT:
+                    gifts.remove(gift)
+                    return
 
     def activate_new_level():
         nonlocal level, wave_length, enemy_vel, lives, level_up, level_count, dif
@@ -203,14 +235,11 @@ def start(user_name, mode):
         # increase enemy velocity every level till some limit, depend on the difficulty
         enemy_vel = min(enemy_vel + (enemy_vel * (0.1 / level)), 1.5 + (dif/20))
 
-        # After every 5 levels the player get extra lives and health
+        # After every 5 levels the player[i] get extra lives and health
         if level % 5 == 0:
             lives = min(10, lives + 1)
-            player.increase_health()
-
-        if 'automatic' in player_gifts and level - automatic_level > 2:
-            player_gifts.remove('automatic')
-            player.reset_cool_down_timer()
+            for i in range(len(player)):
+                player[i].increase_health()
 
 
         # Reset the counter time of level label
@@ -221,7 +250,7 @@ def start(user_name, mode):
         for i in range(wave_length):
             enemy_random_pos_x = random.randrange(30, WIDTH - 80)
             if level == 1:
-                # More time for the player to read the instructions
+                # More time for the player[i] to read the instructions
                 enemy_random_pos_y = random.randrange(-1800, -700 - 20*dif)
             else:
                 enemy_random_pos_y = random.randrange(max(-2500, -1500 - (level * (50 + dif))), - 100)
@@ -231,7 +260,7 @@ def start(user_name, mode):
             enemy = Enemy(enemy_random_pos_x, enemy_random_pos_y, random_color, enemy_vel * rnd_factor)
             enemies.append(enemy)
 
-        random_gift = random.choice(['automatic','yellow_arrow', 'more_speed', 'more_shooter', 'health', 'life'])
+        random_gift = random.choice(['automatic','arrow', 'more_speed', 'more_shooter', 'health', 'life'])
         gift_random_pos_x = random.randrange(30, WIDTH - 80)
         gift_random_pos_y = random.randrange(-1500, -400)
         gift = Gift(gift_random_pos_x, gift_random_pos_y, enemy_vel, random_gift)
@@ -256,8 +285,9 @@ def start(user_name, mode):
         for gift in gifts:
             gift.draw(WIN)
 
-        # draw player
-        player.draw(WIN)
+        # draw player[i]
+        for i in range(len(player)):
+            player[i].draw(WIN)
         if just_begin:
             level_label = LARGE_FONT.render("Good luck {}".format(user_name), 1, WHITE)  # Create level label
             middle_of_screen = int(WIDTH / 2 - level_label.get_width() / 2)
@@ -283,13 +313,14 @@ def start(user_name, mode):
             middle_of_screen = int(WIDTH / 2 - lost_label.get_width() / 2)
             WIN.blit(lost_label, (middle_of_screen, int(HEIGHT / 2 - 50)))  # Display label in the middle
 
-        # draw hearts represents player life
+        # draw hearts represents player[i] life
         for life in range(lives):
             WIN.blit(LIFE, (LIFE.get_width() * life, 0))
 
-        for i, gift in enumerate(player_gifts[:]):
+        '''
+        for i, gift in enumerate(player_gift[:]):
             WIN.blit(GIFT_MAP[gift], (WIDTH - 50 * (i + 1), 0))
-
+        '''
         # Refresh the display
         pygame.display.update()
 
@@ -303,23 +334,24 @@ def start(user_name, mode):
                 begin_count += 1
                 Scroll_bg +=2
         else:
-            # Check if the player lost
-            if lives <= 0 or player.health <= 0:
-                lost = True
-                lost_count += 1
+            # Check if the player[i] lost
+            for i in range(len(player)):
+                if lives <= 0 or player[i].health <= 0:
+                    lost = True
+                    lost_count += 1
 
-            # Keep showing "You Lost!!" text on the screen for 3 seconds
-            if lost:
-                if lost_count > FPS * 2.5:
-                    run = False
-                else:
-                    continue
+                # Keep showing "You Lost!!" text on the screen for 3 seconds
+                if lost:
+                    if lost_count > FPS * 2.5:
+                        run = False
+                    else:
+                        continue
 
-        # Create Next level after the player defeat all the enemies
+        # Create Next level after the player[i] defeat all the enemies
         if len(enemies) == 0 and lives != 0:
             activate_new_level()
 
-        # Keep showing "Level <level>" text on the screen for 2 seconds while after thw player finished the last one
+        # Keep showing "Level <level>" text on the screen for 2 seconds while after thw player[i] finished the last one
         if level_up:
             seconds = 3.5
             # scrolling after no enemy laser on the screen
@@ -336,8 +368,9 @@ def start(user_name, mode):
         else:
             activate_enemies()
 
-        # Activate player movement
-        activate_player()
+        # Activate player[i] movement
+        for i in range(len(player)):
+            activate_player(i)
 
         # Activate all lasers
         activate_lasers()
@@ -353,7 +386,7 @@ def start(user_name, mode):
                 if event.key == pygame.K_ESCAPE:
                     return 0
 
-    # Calculate player score
+    # Calculate player[i] score
     mount_of_left_enemies = min(len(enemies) + 5 - lives, wave_length)
     part_of_killed_enemies = 1 - (mount_of_left_enemies / wave_length)
     score = round(level + part_of_killed_enemies - 1, 2)

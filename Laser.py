@@ -5,12 +5,19 @@ import os
 RED_LASER = pygame.image.load(os.path.join('assets', 'pixel_laser_red.png'))
 GREEN_LASER = pygame.image.load(os.path.join('assets', 'pixel_laser_green.png'))
 BLUE_LASER = pygame.image.load(os.path.join('assets', 'pixel_laser_blue.png'))
-YELLOW_LASER = pygame.image.load(os.path.join('assets', 'pixel_laser_yellow.png'))
+YELLOW_LASER = pygame.image.load(os.path.join('assets', 'yellow_laser.png'))
 YELLOW_LASER_PLUS30 = pygame.image.load(os.path.join('assets', '30_yellow_laser.png'))
 YELLOW_LASER_MINUS30 = pygame.image.load(os.path.join('assets', '-30_yellow_laser.png'))
 YELLOW_ARROW = pygame.image.load(os.path.join('assets', 'yellow_arrow.png'))
 YELLOW_ARROW_PLUS30 = pygame.image.load(os.path.join('assets', '30_yellow_arrow.png'))
 YELLOW_ARROW_MINUS30 = pygame.image.load(os.path.join('assets', '-30_yellow_arrow.png'))
+WHITE_LASER = pygame.image.load(os.path.join('assets', 'white_laser.png'))
+WHITE_LASER_PLUS30 = pygame.image.load(os.path.join('assets', '30_white_laser.png'))
+WHITE_LASER_MINUS30 = pygame.image.load(os.path.join('assets', '-30_white_laser.png'))
+WHITE_ARROW = pygame.image.load(os.path.join('assets', 'white_arrow.png'))
+WHITE_ARROW_PLUS30 = pygame.image.load(os.path.join('assets', '30_white_arrow.png'))
+WHITE_ARROW_MINUS30 = pygame.image.load(os.path.join('assets', '-30_white_arrow.png'))
+
 
 
 class Laser:
@@ -24,6 +31,12 @@ class Laser:
         "yellow_arrow": (YELLOW_ARROW, 0, -9),
         "yellow_arrow_plus30": (YELLOW_ARROW_PLUS30, 5.2, -9),
         "yellow_arrow_minus30": (YELLOW_ARROW_MINUS30, -5.2, -9),
+        "white_laser": (WHITE_LASER, 0, -5),
+        "white_laser_plus30": (WHITE_LASER_PLUS30, 2.9, -5),
+        "white_laser_minus30": (WHITE_LASER_MINUS30, -2.9, -5),
+        "white_arrow": (WHITE_ARROW, 0, -9),
+        "white_arrow_plus30": (WHITE_ARROW_PLUS30, 5.2, -9),
+        "white_arrow_minus30": (WHITE_ARROW_MINUS30, -5.2, -9),
     }
 
     def __init__(self, x, y, typ):
