@@ -10,11 +10,9 @@ from Gift import *
 
 pygame.font.init()
 
-WIDTH, HEIGHT = 1500, 800
+
 WHITE = (255, 255, 255)
 FPS = 70  # frames per second
-
-PLAYER_POSITION_X, PLAYER_POSITION_Y = WIDTH / 2 - 50, HEIGHT - 120
 
 # Sensitive of the press keys for each movement
 PLAYER_VEL = 5
@@ -71,7 +69,10 @@ DIF_MAP = {
 }
 
 
-def start(user_name, mode):
+def start(user_name, mode, num_of_players):
+    WIDTH, HEIGHT = 1000 if num_of_players == 1 else 1500, 800
+    PLAYER_POSITION_X, PLAYER_POSITION_Y = WIDTH / 2 - 50, HEIGHT - 120
+
     # Load windows game
     WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 
@@ -103,10 +104,12 @@ def start(user_name, mode):
     wave_length = int(dif/2 + 3)
     enemy_vel = 0.9 + (dif/100)
 
+
     # Make player[i] instance start in position
     player = []
-    player.append(Player(PLAYER_POSITION_X - 250, PLAYER_POSITION_Y, PLAYER_VEL, 'yellow'))
-    player.append(Player(PLAYER_POSITION_X + 250, PLAYER_POSITION_Y, PLAYER_VEL, 'white'))
+    player.append(Player(PLAYER_POSITION_X + 250 - 250*num_of_players, PLAYER_POSITION_Y, PLAYER_VEL, 'yellow'))
+    if num_of_players == 2:
+        player.append(Player(PLAYER_POSITION_X + 250, PLAYER_POSITION_Y, PLAYER_VEL, 'white'))
 
     lost = False
     level_up = False

@@ -3,7 +3,7 @@ import Game
 import os
 import records
 import secondary_menu
-
+import settings
 
 WHITE = (255, 255, 255)
 
@@ -17,9 +17,10 @@ SMALL_TITLE_FONT = pygame.font.Font(None, 40)
 LARGE_FONT = pygame.font.Font(None, 55)
 
 user_text = ''
+num_of_players = 1
 
 
-def draw_main_menu(hard_rect, normal_rect, easy_rect, records_rect):
+def draw_main_menu(hard_rect, normal_rect, easy_rect, records_rect, settings_rect):
     WIDTH, HEIGHT = 1000, 800
     WIN = pygame.display.set_mode((WIDTH, HEIGHT))
     BG = pygame.transform.scale(pygame.image.load(os.path.join('assets', 'background-black.png')), (WIDTH, HEIGHT))
@@ -42,6 +43,10 @@ def draw_main_menu(hard_rect, normal_rect, easy_rect, records_rect):
     pygame.draw.rect(WIN, records_color, records_rect, 2)
     records_label = SMALL_TITLE_FONT.render("records", 1, records_color)  # Create hard label
     WIN.blit(records_label, (records_rect.x + 10, records_rect.y + 15))  # Display label in the middle
+
+    pygame.draw.rect(WIN, records_color, settings_rect, 2)
+    settings_label = SMALL_TITLE_FONT.render("setting", 1, records_color)  # Create hard label
+    WIN.blit(settings_label, (settings_rect.x + 10, settings_rect.y + 15))  # Display label in the middle
 
     titel_label = font.render("SPACE SHOOTER", 1, WHITE)  # Create begin label
     WIN.blit(titel_label, (mid_width(titel_label), 80))  # Display label in the middle
@@ -72,11 +77,13 @@ def draw_main_menu(hard_rect, normal_rect, easy_rect, records_rect):
 
 
 def main_menu():
-    global user_text
+    global user_text, num_of_players
     run = True
     rect_width = 150
     rect_height = 150
     mode = None
+
+
 
     MIDDLE_WIDTH = 500
     middle_height = 350
@@ -84,13 +91,14 @@ def main_menu():
     # Creating all the mode rectangles
 
     records_rect = pygame.Rect(MIDDLE_WIDTH - 60, 230, 120, 60)
+    settings_rect = pygame.Rect(MIDDLE_WIDTH - 60, 300, 120, 60)
     hard_rect = pygame.Rect(int(MIDDLE_WIDTH + rect_width), middle_height + 250, rect_width, rect_height)
     normal_rect = pygame.Rect(int(MIDDLE_WIDTH - rect_width / 2), middle_height + 250, rect_width, rect_height)
     easy_rect = pygame.Rect(int(MIDDLE_WIDTH - 2 * rect_width), middle_height + 250, rect_width, rect_height)
 
     while run:
         # draw all the labels on the screen
-        draw_main_menu(hard_rect, normal_rect, easy_rect, records_rect)
+        draw_main_menu(hard_rect, normal_rect, easy_rect, records_rect, settings_rect)
 
         # Refresh the display
         pygame.display.update()
@@ -109,13 +117,16 @@ def main_menu():
                     if hard_rect.collidepoint(event.pos):
                         mode = 'hard'
                     if mode is not None:
-                        score = Game.start(user_text, mode)
+                        score = Game.start(user_text, mode, num_of_players)
                         if score != 0:
                             records.add_to_db(user_text, mode, score)
-                            run = secondary_menu.menu(user_text, score, mode)
+                            run = secondary_menu.menu(user_text, score, mode, num_of_players)
                         mode = None
                 if records_rect.collidepoint(event.pos):
                     run = records.records_table()
+                    mode = None
+                if settings_rect.collidepoint(event.pos):
+                    run, num_of_players = settings.main(num_of_players)
                     mode = None
             if event.type == pygame.KEYDOWN:
                 if len(user_text) < 20:

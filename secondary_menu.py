@@ -56,7 +56,7 @@ def draw_menu(play_again_rect, menu_rect, records_rect, score, mode):
     WIN.blit(records_label, (records_rect.x + 10, records_rect.y + 15))  # Display label in the middle
 
 
-def menu(name, score, mode):
+def menu(name, score, mode, num_of_players):
     rect_width = 150
     rect_height = 150
 
@@ -75,7 +75,7 @@ def menu(name, score, mode):
                 return False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if play_again_rect.collidepoint(event.pos):
-                    score = Game.start(name, mode)
+                    score = Game.start(name, mode, num_of_players)
                     if score == 0:
                         return True
                     records.add_to_db(name, mode, score)
