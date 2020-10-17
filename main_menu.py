@@ -10,13 +10,13 @@ WHITE = (255, 255, 255)
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 BG = pygame.transform.scale(pygame.image.load(os.path.join('assets', 'background-black.png')), (WIDTH, HEIGHT))
 
-font = pygame.font.Font(os.path.join('fonts', 'ARCADE.TTF'), 100)
-
 pygame.font.init()
-TITLE_FONT = pygame.font.Font(None, 45)
-NAME_FONT = pygame.font.Font(None, 55)
+font = pygame.font.Font(os.path.join('fonts', 'ARCADE.TTF'), 100)
+TITLE_FONT = pygame.font.Font(os.path.join('fonts', 'FreshLychee-mLoK2.ttf'), 45)
+NAME_FONT = pygame.font.Font(os.path.join('fonts', 'FreshLychee-mLoK2.ttf'), 55)
+
 SMALL_TITLE_FONT = pygame.font.Font(None, 40)
-LARGE_FONT = pygame.font.Font(None, 60)
+LARGE_FONT = pygame.font.Font(None, 55)
 middle_height = int(HEIGHT / 2 - 50)
 MIDDLE_WIDTH = int(WIDTH / 2)
 
@@ -58,15 +58,15 @@ def draw_main_menu(hard_rect, normal_rect, easy_rect, records_rect):
 
         pygame.draw.rect(WIN, easy_color, easy_rect, 2)
         easy_label = LARGE_FONT.render("Easy", 1, easy_color)  # Create hard label
-        WIN.blit(easy_label, (easy_rect.x + 25, easy_rect.y + 60))  # Display label in the middle
+        WIN.blit(easy_label, (easy_rect.x + 30, easy_rect.y + 60))  # Display label in the middle
 
         pygame.draw.rect(WIN, normal_color, normal_rect, 2)
-        normal_label = NAME_FONT.render("Normal", 1, normal_color)  # Create hard label
+        normal_label = LARGE_FONT.render("Normal", 1, normal_color)  # Create hard label
         WIN.blit(normal_label, (normal_rect.x + 10, normal_rect.y + 60))  # Display label in the middle
 
         pygame.draw.rect(WIN, hard_color, hard_rect, 2)
         hard_label = LARGE_FONT.render("Hard", 1, hard_color)  # Create hard label
-        WIN.blit(hard_label, (hard_rect.x + 25, hard_rect.y + 60))  # Display label in the middle
+        WIN.blit(hard_label, (hard_rect.x + 30, hard_rect.y + 60))  # Display label in the middle
 
 
 def main_menu():

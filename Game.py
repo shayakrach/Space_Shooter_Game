@@ -36,13 +36,13 @@ YELLOW_ARROW = pygame.image.load(os.path.join('assets', 'yellow_arrow_small_icon
 AUTOMATIC = pygame.image.load(os.path.join('assets', 'automatic_small.icon.png'))
 
 
-
 # Types of fonts
 MAIN_FONT = pygame.font.SysFont('comicsans', 50)
-LOST_FONT = pygame.font.SysFont('comicsans', 60)
+LOST_FONT = pygame.font.Font(os.path.join('fonts', 'JustMyType-KePl.ttf'), 60)
 LEVEL_FONT = pygame.font.Font(os.path.join('fonts', 'gomarice_game_continue_02.ttf'), 65)
-LARGE_FONT = pygame.font.SysFont('comicsans', 75)
-SMALL_FONT = pygame.font.SysFont('comicsans', 35)
+LARGE_FONT = pygame.font.Font(os.path.join('fonts', 'FreshLychee-mLoK2.ttf'), 70)
+SMALL_FONT = pygame.font.Font(os.path.join('fonts', 'JustMyType-KePl.ttf'), 35)
+
 
 GIFT_MAP = {
     "double_shooter": DOUBLE_SHOOTER,

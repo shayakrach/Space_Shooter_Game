@@ -9,13 +9,18 @@ WHITE = (255, 255, 255)
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 BG = pygame.transform.scale(pygame.image.load(os.path.join('assets', 'background-black.png')), (WIDTH, HEIGHT))
 
+pygame.font.init()
 font = pygame.font.Font(os.path.join('fonts', 'ARCADE.TTF'), 100)
 
-pygame.font.init()
-TITLE_FONT = pygame.font.Font(None, 45)
+
+TITLE_FONT = pygame.font.Font(os.path.join('fonts', 'JustMyType-KePl.ttf'), 40)
 NAME_FONT = pygame.font.Font(None, 55)
-SMALL_TITLE_FONT = pygame.font.Font(None, 40)
+SMALL_TITLE_FONT = pygame.font.Font(None, 35)
 LARGE_FONT = pygame.font.Font(None, 60)
+RECORD_FONT = pygame.font.Font(os.path.join('fonts', 'ARCADECLASSIC.TTF'), 50)
+
+
+
 middle_height = int(HEIGHT / 2 - 50)
 MIDDLE_WIDTH = int(WIDTH / 2)
 
@@ -29,7 +34,7 @@ def draw_menu(play_again_rect, menu_rect, records_rect, score, mode):
     play_again_color = (73, 114, 252)
     up_bar_color = (163, 128, 222)
     # Labels
-    broke_record_label = TITLE_FONT.render("Your broke the record!!", 1, WHITE)  # Create record label
+    broke_record_label = RECORD_FONT.render("You    broke    the    record!!", 1, WHITE)  # Create record label
     if score == records.get_record(mode):
         WIN.blit(broke_record_label, (mid_width(broke_record_label), middle_height - 150))  # Display label in the middle
 
