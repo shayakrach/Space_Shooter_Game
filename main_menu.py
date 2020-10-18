@@ -83,8 +83,6 @@ def main_menu():
     rect_height = 150
     mode = None
 
-
-
     MIDDLE_WIDTH = 500
     middle_height = 350
     # play_rect = pygame.Rect(MIDDLE_WIDTH - 60, 280, 120, 60)
