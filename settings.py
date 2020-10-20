@@ -3,19 +3,21 @@ import os
 
 WHITE = (255, 255, 255)
 
+rect = {}
+
 WIDTH, HEIGHT = 1000, 800
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 BG = pygame.transform.scale(pygame.image.load(os.path.join('assets', 'background-black.png')), (WIDTH, HEIGHT))
 middle_width = int(WIDTH / 2)
 middle_height = int(HEIGHT / 2)
 
-TITLE = pygame.font.Font(os.path.join('fonts', 'ARCADE.TTF'), 100)
-
 pygame.font.init()
+TITLE = pygame.font.Font(os.path.join('fonts', 'ARCADE.TTF'), 100)
 TITLE_FONT = pygame.font.Font(os.path.join('fonts', 'FreshLychee-mLoK2.ttf'), 45)
 NAME_FONT = pygame.font.Font(None, 55)
 SMALL_TITLE_FONT = pygame.font.Font(None, 40)
 LARGE_FONT = pygame.font.Font(None, 60)
+
 
 KEYS = {
     pygame.K_a: 'a',
@@ -44,14 +46,21 @@ KEYS = {
     pygame.K_x: 'x',
     pygame.K_y: 'y',
     pygame.K_z: 'z',
-    pygame.K_LEFT: 'le',
-    pygame.K_RIGHT: 'ri',
+    pygame.K_1: '1',
+    pygame.K_2: '2',
+    pygame.K_3: '3',
+    pygame.K_4: '4',
+    pygame.K_5: '5',
+    pygame.K_6: '6',
+    pygame.K_7: '7',
+    pygame.K_8: '8',
+    pygame.K_9: '9',
+    pygame.K_LEFT: '<-',
+    pygame.K_RIGHT: '->',
     pygame.K_UP: 'up',
     pygame.K_DOWN: 'do',
     pygame.K_SPACE: 'sp'
 }
-
-rect = {}
 
 
 def main(num_of_players, player_keys):
@@ -104,7 +113,7 @@ def main(num_of_players, player_keys):
                         return None
                 if event.type == pygame.KEYDOWN:
                     try:
-                        if event.key not in player_keys[i].values():
+                        if event.key not in player_keys[i].values() and event.key in KEYS.keys():
                             player_keys[i][key] = event.key
                     finally:
                         borders[i][key] = 2
@@ -160,7 +169,7 @@ def main(num_of_players, player_keys):
             draw_rect(rect[i]['down'], KEYS[player_keys[i]['down']], SMALL_TITLE_FONT, borders[i]['down'], 15, 10)
             draw_rect(rect[i]['left'], KEYS[player_keys[i]['left']], SMALL_TITLE_FONT, borders[i]['left'], 15, 10)
             draw_rect(rect[i]['right'], KEYS[player_keys[i]['right']], SMALL_TITLE_FONT, borders[i]['right'], 15, 10)
-            draw_rect(rect[i]['shoot'], KEYS[player_keys[i]['shoot']], SMALL_TITLE_FONT, borders[i]['shoot'], 15, 10)
+            draw_rect(rect[i]['shoot'], KEYS[player_keys[i]['shoot']], SMALL_TITLE_FONT, borders[i]['shoot'], 75, 10)
 
         # Refresh the display
         pygame.display.update()

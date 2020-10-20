@@ -101,7 +101,7 @@ def start(user_name, mode, num_of_players, player_keys):
     # Set the number and velocity of the enemies
     enemies = []
     dead_enemies = []
-    wave_length = int(dif/2 + 3)
+    wave_length = int(dif/2 + 3) * num_of_players
     enemy_vel = 0.9 + (dif/100)
 
 
@@ -233,7 +233,7 @@ def start(user_name, mode, num_of_players, player_keys):
     def activate_new_level():
         nonlocal level, wave_length, enemy_vel, lives, level_up, level_count, dif
         level += 1
-        wave_length += 1 + int(dif/2)
+        wave_length += 1 + int(dif/2)*num_of_players
         # increase enemy velocity every level till some limit, depend on the difficulty
         enemy_vel = min(enemy_vel + (enemy_vel * (0.1 / level)), 1.5 + (dif/20))
 
@@ -242,7 +242,6 @@ def start(user_name, mode, num_of_players, player_keys):
             lives = min(10, lives + 1)
             for i in range(len(player)):
                 player[i].increase_health()
-
 
         # Reset the counter time of level label
         level_up = True

@@ -19,6 +19,7 @@ hard_color = (255, 0, 0)
 normal_color = (255, 189, 34)
 easy_color = (80, 245, 68)
 
+'''
 KEYS = {
     'a': pygame.K_a,
     'b': pygame.K_b ,
@@ -52,14 +53,14 @@ KEYS = {
     'do': pygame.K_DOWN,
     'sp': pygame.K_SPACE
 }
-
+'''
 player = {
         0: {
-            'left': pygame.K_a,
-            'right': pygame.K_b,
-            'up': pygame.K_c,
-            'down': pygame.K_d,
-            'shoot': pygame.K_e,
+            'left': pygame.K_LEFT,
+            'right': pygame.K_RIGHT,
+            'up': pygame.K_UP,
+            'down': pygame.K_DOWN,
+            'shoot': pygame.K_SPACE,
             'color': 'yellow'
         },
         1: {
