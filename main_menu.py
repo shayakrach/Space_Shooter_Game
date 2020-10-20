@@ -29,6 +29,10 @@ def draw_main_menu(hard_rect, normal_rect, easy_rect, records_rect, settings_rec
 
     middle_height = int(HEIGHT / 2 - 50)
 
+    def draw_rect(rect, text, font, border, fix_x, fix_y, color=WHITE):
+        pygame.draw.rect(WIN, color, rect, border)
+        label = font.render(text, 1, color)  # Create hard label
+        WIN.blit(label, (rect.x + fix_x, rect.y + fix_y))  # Display label in the middle
 
     def mid_width(obj):
         return int(WIDTH / 2 - obj.get_width() / 2)
@@ -40,13 +44,8 @@ def draw_main_menu(hard_rect, normal_rect, easy_rect, records_rect, settings_rec
     normal_color = (255, 189, 34)
     easy_color = (80, 245, 68)
 
-    pygame.draw.rect(WIN, records_color, records_rect, 2)
-    records_label = SMALL_TITLE_FONT.render("records", 1, records_color)  # Create hard label
-    WIN.blit(records_label, (records_rect.x + 10, records_rect.y + 15))  # Display label in the middle
-
-    pygame.draw.rect(WIN, records_color, settings_rect, 2)
-    settings_label = SMALL_TITLE_FONT.render("setting", 1, records_color)  # Create hard label
-    WIN.blit(settings_label, (settings_rect.x + 10, settings_rect.y + 15))  # Display label in the middle
+    draw_rect(records_rect, 'records', SMALL_TITLE_FONT, 2, 10, 15, records_color)
+    draw_rect(settings_rect, 'setting', SMALL_TITLE_FONT, 2, 10, 15, records_color)
 
     titel_label = font.render("SPACE SHOOTER", 1, WHITE)  # Create begin label
     WIN.blit(titel_label, (mid_width(titel_label), 80))  # Display label in the middle
@@ -63,17 +62,9 @@ def draw_main_menu(hard_rect, normal_rect, easy_rect, records_rect, settings_rec
         start_game_label = TITLE_FONT.render("Click on the desire difficulty", 1, WHITE)  # Create begin label
         WIN.blit(start_game_label, (mid_width(start_game_label), middle_height + 180))  # Display label in the middle
 
-        pygame.draw.rect(WIN, easy_color, easy_rect, 2)
-        easy_label = LARGE_FONT.render("Easy", 1, easy_color)  # Create hard label
-        WIN.blit(easy_label, (easy_rect.x + 30, easy_rect.y + 60))  # Display label in the middle
-
-        pygame.draw.rect(WIN, normal_color, normal_rect, 2)
-        normal_label = LARGE_FONT.render("Normal", 1, normal_color)  # Create hard label
-        WIN.blit(normal_label, (normal_rect.x + 10, normal_rect.y + 60))  # Display label in the middle
-
-        pygame.draw.rect(WIN, hard_color, hard_rect, 2)
-        hard_label = LARGE_FONT.render("Hard", 1, hard_color)  # Create hard label
-        WIN.blit(hard_label, (hard_rect.x + 30, hard_rect.y + 60))  # Display label in the middle
+        draw_rect(easy_rect, 'Easy', LARGE_FONT, 2, 30, 60, easy_color)
+        draw_rect(normal_rect, 'Normal', LARGE_FONT, 2, 10, 60, normal_color)
+        draw_rect(hard_rect, 'Hard', LARGE_FONT, 2, 30, 60, hard_color)
 
 
 def main_menu():

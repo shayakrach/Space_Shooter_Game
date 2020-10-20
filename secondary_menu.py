@@ -22,6 +22,11 @@ def draw_menu(play_again_rect, menu_rect, records_rect, score, mode):
     WIDTH, HEIGHT = 1000, 800
     middle_height = int(HEIGHT / 2 - 50)
 
+    def draw_rect(rect, text, font, border, fix_x, fix_y, color=WHITE):
+        pygame.draw.rect(WIN, color, rect, border)
+        label = font.render(text, 1, color)  # Create hard label
+        WIN.blit(label, (rect.x + fix_x, rect.y + fix_y))  # Display label in the middle
+
     def mid_width(obj):
         return int(WIDTH / 2 - obj.get_width() / 2)
 
@@ -41,19 +46,12 @@ def draw_menu(play_again_rect, menu_rect, records_rect, score, mode):
     score_label = TITLE_FONT.render("Score: {}".format(score), 1, WHITE)  # Create record label
     WIN.blit(score_label, (mid_width(score_label), middle_height))  # Display label in the middle
 
-    pygame.draw.rect(WIN, play_again_color, play_again_rect, 3)
-    play_label = LARGE_FONT.render("Play", 1, play_again_color)  # Create hard label
-    WIN.blit(play_label, (play_again_rect.x + 30, play_again_rect.y + 30))  # Display label in the middle
+    draw_rect(play_again_rect, 'Play', LARGE_FONT, 2, 30, 30,play_again_color)
     again_label = LARGE_FONT.render("again", 1, play_again_color)  # Create hard label
     WIN.blit(again_label, (play_again_rect.x + 20, play_again_rect.y + 90))  # Display label in the middle
 
-    pygame.draw.rect(WIN, up_bar_color, menu_rect, 2)
-    menu_label = SMALL_TITLE_FONT.render("menu", 1, up_bar_color)  # Create hard label
-    WIN.blit(menu_label, (menu_rect.x + 20, menu_rect.y + 15))  # Display label in the middle
-
-    pygame.draw.rect(WIN, up_bar_color, records_rect, 2)
-    records_label = SMALL_TITLE_FONT.render("records", 1, up_bar_color)  # Create hard label
-    WIN.blit(records_label, (records_rect.x + 10, records_rect.y + 15))  # Display label in the middle
+    draw_rect(menu_rect, 'menu', SMALL_TITLE_FONT, 2, 20, 15, up_bar_color)
+    draw_rect(records_rect, 'records', SMALL_TITLE_FONT, 2, 10, 15, up_bar_color)
 
 
 def menu(name, score, mode, num_of_players):

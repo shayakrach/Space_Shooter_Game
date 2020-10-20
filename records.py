@@ -103,7 +103,12 @@ def records_table(sent_mode=None):
     rect_width = 150
     rect_height = 150
 
-    menu_rect = pygame.Rect(50, 50, 120, 60)
+    def draw_rect(rect, text, font, border, fix_x, fix_y, color=WHITE):
+        pygame.draw.rect(WIN, color, rect, border)
+        label = font.render(text, 1, color)  # Create hard label
+        WIN.blit(label, (rect.x + fix_x, rect.y + fix_y))  # Display label in the middle
+
+    back_rect = pygame.Rect(50, 50, 120, 60)
     hard_rect = pygame.Rect(int(WIDTH / 2 + rect_width), int(HEIGHT / 2 +200), rect_width, rect_height)
     normal_rect = pygame.Rect(int(WIDTH / 2 - rect_width / 2), int(HEIGHT / 2 +200), rect_width, rect_height)
     easy_rect = pygame.Rect(int(WIDTH / 2- 2 * rect_width), int(HEIGHT / 2 +200), rect_width, rect_height)
@@ -113,33 +118,22 @@ def records_table(sent_mode=None):
     easy_color = (80, 245, 68)
 
     up_bar_color = (163, 128, 222)
-    pygame.draw.rect(WIN, up_bar_color, menu_rect, 2)
 
     borders = [0, 0, 0]
 
     while True:
         WIN.blit(BG, (0, 0))  # Display background
 
-        titel_label = font.render("RECORDS", 1, WHITE)  # Create begin label
-        WIN.blit(titel_label, (int(WIDTH / 2 - titel_label.get_width() / 2), 80))  # Display label in the middle
-        pygame.draw.rect(WIN, up_bar_color, menu_rect, 2)
-        menu_label = SMALL_TITLE_FONT.render("back", 1, up_bar_color)  # Create hard label
-        WIN.blit(menu_label, (menu_rect.x + 25, menu_rect.y + 20))  # Display label in the middle
+        title_label = font.render("RECORDS", 1, WHITE)  # Create begin label
+        WIN.blit(title_label, (int(WIDTH / 2 - title_label.get_width() / 2), 80))  # Display label in the middle
 
-        pygame.draw.rect(WIN, easy_color, easy_rect, 2 + borders[0])
-        easy_label = LARGE_FONT.render("Easy", 1, easy_color)  # Create hard label
-        WIN.blit(easy_label, (easy_rect.x + 25, easy_rect.y + 60))  # Display label in the middle
-
-        pygame.draw.rect(WIN, normal_color, normal_rect, 2 + borders[1])
-        normal_label = NAME_FONT.render("Normal", 1, normal_color)  # Create hard label
-        WIN.blit(normal_label, (normal_rect.x + 10, normal_rect.y + 60))  # Display label in the middle
-
-        pygame.draw.rect(WIN, hard_color, hard_rect, 2 + borders[2])
-        hard_label = LARGE_FONT.render("Hard", 1, hard_color)  # Create hard label
-        WIN.blit(hard_label, (hard_rect.x + 25, hard_rect.y + 60))  # Display label in the middle
+        draw_rect(back_rect, 'back', SMALL_TITLE_FONT, 2, 25, 20, up_bar_color)
+        draw_rect(easy_rect, 'Easy', LARGE_FONT,  2 + borders[0], 25, 60,  easy_color)
+        draw_rect(normal_rect, 'Normal', NAME_FONT,  2 + borders[1], 10, 60, normal_color)
+        draw_rect(hard_rect, 'Hard', LARGE_FONT,  2 + borders[2], 25, 60, hard_color)
 
         if mode is not None:
-            print_records(mode,WIN)
+            print_records(mode, WIN)
         # Refresh the display
         pygame.display.update()
         # Start the game by moving the mouse or get out
@@ -148,7 +142,7 @@ def records_table(sent_mode=None):
             if event.type == pygame.QUIT:
                 return False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if menu_rect.collidepoint(event.pos):
+                if back_rect.collidepoint(event.pos):
                     return True
                 if easy_rect.collidepoint(event.pos):
                     mode = 'easy'
