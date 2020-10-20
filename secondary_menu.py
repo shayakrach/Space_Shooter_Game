@@ -54,7 +54,7 @@ def draw_menu(play_again_rect, menu_rect, records_rect, score, mode):
     draw_rect(records_rect, 'records', SMALL_TITLE_FONT, 2, 10, 15, up_bar_color)
 
 
-def menu(name, score, mode, num_of_players):
+def menu(name, score, mode, num_of_players, player):
     rect_width = 150
     rect_height = 150
 
@@ -73,7 +73,7 @@ def menu(name, score, mode, num_of_players):
                 return False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if play_again_rect.collidepoint(event.pos):
-                    score = Game.start(name, mode, num_of_players)
+                    score = Game.start(name, mode, num_of_players, player)
                     if score == 0:
                         return True
                     records.add_to_db(name, mode, score)

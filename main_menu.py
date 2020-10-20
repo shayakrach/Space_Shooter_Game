@@ -5,9 +5,6 @@ import records
 import secondary_menu
 import settings
 
-WHITE = (255, 255, 255)
-
-
 pygame.font.init()
 font = pygame.font.Font(os.path.join('fonts', 'ARCADE.TTF'), 100)
 TITLE_FONT = pygame.font.Font(os.path.join('fonts', 'FreshLychee-mLoK2.ttf'), 45)
@@ -16,11 +13,82 @@ NAME_FONT = pygame.font.Font(os.path.join('fonts', 'FreshLychee-mLoK2.ttf'), 55)
 SMALL_TITLE_FONT = pygame.font.Font(None, 40)
 LARGE_FONT = pygame.font.Font(None, 55)
 
+WHITE = (255, 255, 255)
+records_color = (163, 128, 222)
+hard_color = (255, 0, 0)
+normal_color = (255, 189, 34)
+easy_color = (80, 245, 68)
+
+KEYS = {
+    'a': pygame.K_a,
+    'b': pygame.K_b ,
+    'c': pygame.K_c,
+    'd': pygame.K_d,
+    'e': pygame.K_e,
+    'f': pygame.K_f,
+    'g': pygame.K_g,
+    'h': pygame.K_h,
+    'i': pygame.K_i,
+    'j': pygame.K_j,
+    'k': pygame.K_k,
+    'l': pygame.K_l,
+    'm': pygame.K_m,
+    'n': pygame.K_n,
+    'o': pygame.K_o,
+    'p': pygame.K_p,
+    'q': pygame.K_q,
+    'r': pygame.K_r,
+    's': pygame.K_s,
+    't': pygame.K_t,
+    'u': pygame.K_u,
+    'v': pygame.K_v,
+    'w': pygame.K_w,
+    'x': pygame.K_x,
+    'y': pygame.K_y,
+    'z': pygame.K_z,
+    'le': pygame.K_LEFT,
+    'ri': pygame.K_RIGHT,
+    'up': pygame.K_UP,
+    'do': pygame.K_DOWN,
+    'sp': pygame.K_SPACE
+}
+
+player = {
+        0: {
+            'left': pygame.K_a,
+            'right': pygame.K_b,
+            'up': pygame.K_c,
+            'down': pygame.K_d,
+            'shoot': pygame.K_e,
+            'color': 'yellow'
+        },
+        1: {
+            'left': pygame.K_f,
+            'right': pygame.K_g,
+            'up': pygame.K_h,
+            'down': pygame.K_i,
+            'shoot': pygame.K_j,
+            'color': 'white'
+        }
+    }
+
+
+rect_width = 150
+rect_height = 150
+MIDDLE_WIDTH = 500
+middle_height = 350
+# Creating all the mode rectangles
+
+records_rect = pygame.Rect(MIDDLE_WIDTH - 60, 230, 120, 60)
+settings_rect = pygame.Rect(MIDDLE_WIDTH - 60, 300, 120, 60)
+hard_rect = pygame.Rect(int(MIDDLE_WIDTH + rect_width), middle_height + 250, rect_width, rect_height)
+normal_rect = pygame.Rect(int(MIDDLE_WIDTH - rect_width / 2), middle_height + 250, rect_width, rect_height)
+easy_rect = pygame.Rect(int(MIDDLE_WIDTH - 2 * rect_width), middle_height + 250, rect_width, rect_height)
 user_text = ''
 num_of_players = 1
 
 
-def draw_main_menu(hard_rect, normal_rect, easy_rect, records_rect, settings_rect):
+def draw_main_menu():
     WIDTH, HEIGHT = 1000, 800
     WIN = pygame.display.set_mode((WIDTH, HEIGHT))
     BG = pygame.transform.scale(pygame.image.load(os.path.join('assets', 'background-black.png')), (WIDTH, HEIGHT))
@@ -37,18 +105,11 @@ def draw_main_menu(hard_rect, normal_rect, easy_rect, records_rect, settings_rec
     def mid_width(obj):
         return int(WIDTH / 2 - obj.get_width() / 2)
 
-
-    # play_color = (73, 114, 252)
-    records_color = (163, 128, 222)
-    hard_color = (255, 0, 0)
-    normal_color = (255, 189, 34)
-    easy_color = (80, 245, 68)
-
     draw_rect(records_rect, 'records', SMALL_TITLE_FONT, 2, 10, 15, records_color)
     draw_rect(settings_rect, 'setting', SMALL_TITLE_FONT, 2, 10, 15, records_color)
 
-    titel_label = font.render("SPACE SHOOTER", 1, WHITE)  # Create begin label
-    WIN.blit(titel_label, (mid_width(titel_label), 80))  # Display label in the middle
+    title_label = font.render("SPACE SHOOTER", 1, WHITE)  # Create begin label
+    WIN.blit(title_label, (mid_width(title_label), 80))  # Display label in the middle
 
     # Labels
     name_label = TITLE_FONT.render("Enter your name: ", 1, WHITE)  # Create begin label
@@ -68,26 +129,13 @@ def draw_main_menu(hard_rect, normal_rect, easy_rect, records_rect, settings_rec
 
 
 def main_menu():
-    global user_text, num_of_players
+    global user_text, num_of_players, player_keys
     run = True
-    rect_width = 150
-    rect_height = 150
     mode = None
-
-    MIDDLE_WIDTH = 500
-    middle_height = 350
-    # play_rect = pygame.Rect(MIDDLE_WIDTH - 60, 280, 120, 60)
-    # Creating all the mode rectangles
-
-    records_rect = pygame.Rect(MIDDLE_WIDTH - 60, 230, 120, 60)
-    settings_rect = pygame.Rect(MIDDLE_WIDTH - 60, 300, 120, 60)
-    hard_rect = pygame.Rect(int(MIDDLE_WIDTH + rect_width), middle_height + 250, rect_width, rect_height)
-    normal_rect = pygame.Rect(int(MIDDLE_WIDTH - rect_width / 2), middle_height + 250, rect_width, rect_height)
-    easy_rect = pygame.Rect(int(MIDDLE_WIDTH - 2 * rect_width), middle_height + 250, rect_width, rect_height)
 
     while run:
         # draw all the labels on the screen
-        draw_main_menu(hard_rect, normal_rect, easy_rect, records_rect, settings_rect)
+        draw_main_menu()
 
         # Refresh the display
         pygame.display.update()
@@ -106,16 +154,16 @@ def main_menu():
                     if hard_rect.collidepoint(event.pos):
                         mode = 'hard'
                     if mode is not None:
-                        score = Game.start(user_text, mode, num_of_players)
+                        score = Game.start(user_text, mode, num_of_players, player)
                         if score != 0:
                             records.add_to_db(user_text, mode, score)
-                            run = secondary_menu.menu(user_text, score, mode, num_of_players)
+                            run = secondary_menu.menu(user_text, score, mode, num_of_players, player)
                         mode = None
                 if records_rect.collidepoint(event.pos):
                     run = records.records_table()
                     mode = None
                 if settings_rect.collidepoint(event.pos):
-                    run, num_of_players = settings.main(num_of_players)
+                    run, num_of_players, player_keys = settings.main(num_of_players, player)
                     mode = None
             if event.type == pygame.KEYDOWN:
                 if len(user_text) < 20:

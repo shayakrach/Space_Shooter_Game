@@ -34,7 +34,7 @@ LOST_FONT = pygame.font.Font(os.path.join('fonts', 'JustMyType-KePl.ttf'), 60)
 LEVEL_FONT = pygame.font.Font(os.path.join('fonts', 'gomarice_game_continue_02.ttf'), 65)
 LARGE_FONT = pygame.font.Font(os.path.join('fonts', 'FreshLychee-mLoK2.ttf'), 70)
 SMALL_FONT = pygame.font.Font(os.path.join('fonts', 'JustMyType-KePl.ttf'), 35)
-
+'''
 PLAYER = {
     0: {
         'left_key': pygame.K_LEFT,
@@ -53,7 +53,7 @@ PLAYER = {
         'color': 'yellow'
     }
 }
-
+'''
 GIFT_MAP = {
     "double_shooter": DOUBLE_SHOOTER,
     "triple_shooter": TRIPLE_SHOOTER,
@@ -69,7 +69,7 @@ DIF_MAP = {
 }
 
 
-def start(user_name, mode, num_of_players):
+def start(user_name, mode, num_of_players, player_keys):
     WIDTH, HEIGHT = 1000 if num_of_players == 1 else 1500, 800
     PLAYER_POSITION_X, PLAYER_POSITION_Y = WIDTH / 2 - 50, HEIGHT - 120
 
@@ -119,13 +119,12 @@ def start(user_name, mode, num_of_players):
     level_count = 0
 
     def activate_player(i):
-
         # Pressed keys
-        left_key = PLAYER[i]['left_key']
-        right_key = PLAYER[i]['right_key']
-        up_key = PLAYER[i]['up_key']
-        down_key = PLAYER[i]['down_key']
-        shoot_key = PLAYER[i]['shoot_key']
+        left_key = player_keys[i]['left']
+        right_key = player_keys[i]['right']
+        up_key = player_keys[i]['up']
+        down_key = player_keys[i]['down']
+        shoot_key = player_keys[i]['shoot']
 
         # Control the pressed keys
         keys = pygame.key.get_pressed()
