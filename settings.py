@@ -5,6 +5,9 @@ WHITE = (255, 255, 255)
 
 rect = {}
 
+WHITE_SHIP = pygame.image.load(os.path.join('assets', 'white_ship_small_icon.png'))
+YELLOW_SHIP = pygame.image.load(os.path.join('assets', 'yellow_ship_small_icon.png'))
+
 WIDTH, HEIGHT = 1000, 800
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 BG = pygame.transform.scale(pygame.image.load(os.path.join('assets', 'background-black.png')), (WIDTH, HEIGHT))
@@ -63,7 +66,7 @@ KEYS = {
 }
 
 
-def main(num_of_players, player_keys):
+def main(num_of_players, player_info):
     def key_rect_pos(flip, error=0):
         return 470 + error + flip * (num_of_players - 1) * 230
 
@@ -76,11 +79,13 @@ def main(num_of_players, player_keys):
 
     up_bar_color = (163, 128, 222)
 
-    participants_borders = [3, 0] if num_of_players == 1 else [0, 3]
+    participants_borders = [5, 2] if num_of_players == 1 else [2, 5]
     run = None
 
     borders = {
         0: {
+            'white': 5 if player_info[0]['color'] == 'white' else 2,
+            'yellow': 5 if player_info[0]['color'] == 'yellow' else 2,
             'left': 2,
             'right': 2,
             'up': 2,
@@ -88,6 +93,8 @@ def main(num_of_players, player_keys):
             'shoot': 2,
         },
         1: {
+            'white': 5 if player_info[1]['color'] == 'white' else 2,
+            'yellow': 5 if player_info[1]['color'] == 'yellow' else 2,
             'left': 2,
             'right': 2,
             'up': 2,
@@ -113,8 +120,8 @@ def main(num_of_players, player_keys):
                         return None
                 if event.type == pygame.KEYDOWN:
                     try:
-                        if event.key not in player_keys[i].values() and event.key in KEYS.keys():
-                            player_keys[i][key] = event.key
+                        if event.key not in player_info[i].values() and event.key in KEYS.keys():
+                            player_info[i][key] = event.key
                     finally:
                         borders[i][key] = 2
                         return None
@@ -124,6 +131,10 @@ def main(num_of_players, player_keys):
         label = font.render(text, 1, color)  # Create hard label
         WIN.blit(label, (rect.x + fix_x, rect.y + fix_y))  # Display label in the middle
 
+    def draw_img_in_rect(rect, img, border, fix_x, fix_y, color=WHITE):
+        pygame.draw.rect(WIN, color, rect, border)
+        WIN.blit(img, (rect.x + fix_x, rect.y + fix_y))  # Display label in the middle
+
     def mid_width(obj):
         return int(WIDTH / 2 - obj.get_width() / 2)
 
@@ -132,18 +143,22 @@ def main(num_of_players, player_keys):
 
         rect = {
             0: {
+                'white': pygame.Rect(key_rect_pos(-1, -45), middle_height + 20, 70, 70),
+                'yellow': pygame.Rect(key_rect_pos(-1, 25), middle_height + 20, 70, 70),
                 'up': pygame.Rect(key_rect_pos(-1), middle_height + 140, 50, 50),
                 'down': pygame.Rect(key_rect_pos(-1), middle_height + 200, 50, 50),
                 'right': pygame.Rect(key_rect_pos(-1, 60), middle_height + 200, 50, 50),
                 'left': pygame.Rect(key_rect_pos(-1, -60), middle_height + 200, 50, 50),
-                'shoot': pygame.Rect(key_rect_pos(-1, -60), middle_height + 260, 170, 50)
+                'shoot': pygame.Rect(key_rect_pos(-1, -60), middle_height + 260, 170, 50),
             },
             1: {
+                'white': pygame.Rect(key_rect_pos(1, -40), middle_height + 20 , 70, 70),
+                'yellow': pygame.Rect(key_rect_pos(1, 30), middle_height + 20 , 70, 70),
                 'up': pygame.Rect(key_rect_pos(1), middle_height + 140, 50, 50),
                 'down': pygame.Rect(key_rect_pos(1), middle_height + 200, 50, 50),
                 'right': pygame.Rect(key_rect_pos(1, 60), middle_height + 200, 50, 50),
                 'left': pygame.Rect(key_rect_pos(1, -60), middle_height + 200, 50, 50),
-                'shoot': pygame.Rect(key_rect_pos(1, -60), middle_height + 260, 170, 50)
+                'shoot': pygame.Rect(key_rect_pos(1, -60), middle_height + 260, 170, 50),
             }
         }
 
@@ -157,19 +172,21 @@ def main(num_of_players, player_keys):
         num_players_label = TITLE_FONT.render("Num of players", 1, WHITE)  # Create begin label
         WIN.blit(num_players_label, (mid_width(num_players_label), one_rect.y - 80))  # Display label in the middle
 
-        draw_rect(one_rect, 'One', SMALL_TITLE_FONT, 2 + participants_borders[0], 15, 10)
-        draw_rect(two_rect, 'Two', SMALL_TITLE_FONT, 2 + participants_borders[1], 15, 10)
+        draw_rect(one_rect, 'One', SMALL_TITLE_FONT, participants_borders[0], 15, 10)
+        draw_rect(two_rect, 'Two', SMALL_TITLE_FONT, participants_borders[1], 15, 10)
 
         for i in range(num_of_players):
             player1_label = TITLE_FONT.render("Player {}".format(i + 1), 1, WHITE)  # Create begin label
             label_x_pos = mid_width(player1_label) + (i * 2 - 1) * (num_of_players - 1) * 230
             WIN.blit(player1_label, (label_x_pos, one_rect.y + 80))  # Display label in the middle
 
-            draw_rect(rect[i]['up'], KEYS[player_keys[i]['up']], SMALL_TITLE_FONT, borders[i]['up'], 15, 10)
-            draw_rect(rect[i]['down'], KEYS[player_keys[i]['down']], SMALL_TITLE_FONT, borders[i]['down'], 15, 10)
-            draw_rect(rect[i]['left'], KEYS[player_keys[i]['left']], SMALL_TITLE_FONT, borders[i]['left'], 15, 10)
-            draw_rect(rect[i]['right'], KEYS[player_keys[i]['right']], SMALL_TITLE_FONT, borders[i]['right'], 15, 10)
-            draw_rect(rect[i]['shoot'], KEYS[player_keys[i]['shoot']], SMALL_TITLE_FONT, borders[i]['shoot'], 75, 10)
+            draw_img_in_rect(rect[i]['white'], WHITE_SHIP, borders[i]['white'], 2, 10)
+            draw_img_in_rect(rect[i]['yellow'], YELLOW_SHIP, borders[i]['yellow'], 2, 10)
+            draw_rect(rect[i]['up'], KEYS[player_info[i]['up']], SMALL_TITLE_FONT, borders[i]['up'], 15, 10)
+            draw_rect(rect[i]['down'], KEYS[player_info[i]['down']], SMALL_TITLE_FONT, borders[i]['down'], 15, 10)
+            draw_rect(rect[i]['left'], KEYS[player_info[i]['left']], SMALL_TITLE_FONT, borders[i]['left'], 15, 10)
+            draw_rect(rect[i]['right'], KEYS[player_info[i]['right']], SMALL_TITLE_FONT, borders[i]['right'], 15, 10)
+            draw_rect(rect[i]['shoot'], KEYS[player_info[i]['shoot']], SMALL_TITLE_FONT, borders[i]['shoot'], 75, 10)
 
         # Refresh the display
         pygame.display.update()
@@ -184,12 +201,20 @@ def main(num_of_players, player_keys):
                 if menu_rect.collidepoint(event.pos):
                     run = True
                 if one_rect.collidepoint(event.pos):
-                    participants_borders = [3, 0]
+                    participants_borders = [5, 2]
                     num_of_players = 1
                 if two_rect.collidepoint(event.pos):
-                    participants_borders = [0, 3]
+                    participants_borders = [2, 5]
                     num_of_players = 2
                 for i in range(num_of_players):
+                    if rect[i]['white'].collidepoint(event.pos):
+                        player_info[i]['color'] = 'white'
+                        borders[i]['white'] = 5
+                        borders[i]['yellow'] = 2
+                    if rect[i]['yellow'].collidepoint(event.pos):
+                        player_info[i]['color'] = 'yellow'
+                        borders[i]['white'] = 2
+                        borders[i]['yellow'] = 5
                     if rect[i]['up'].collidepoint(event.pos):
                         run = change_key('up', i)
                     if rect[i]['down'].collidepoint(event.pos):
@@ -201,4 +226,4 @@ def main(num_of_players, player_keys):
                     if rect[i]['shoot'].collidepoint(event.pos):
                         run = change_key('shoot', i)
 
-    return run, num_of_players, player_keys
+    return run, num_of_players, player_info

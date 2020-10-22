@@ -10,7 +10,6 @@ from Gift import *
 
 pygame.font.init()
 
-
 WHITE = (255, 255, 255)
 FPS = 70  # frames per second
 
@@ -27,7 +26,6 @@ TRIPLE_SHOOTER = pygame.image.load(os.path.join('assets', 'triple_shooter_small_
 MORE_SPEED = pygame.image.load(os.path.join('assets', 'more_speed_small_icon.png'))
 YELLOW_ARROW = pygame.image.load(os.path.join('assets', 'yellow_arrow_small_icon.png'))
 AUTOMATIC = pygame.image.load(os.path.join('assets', 'automatic_small.icon.png'))
-
 
 # Types of fonts
 LOST_FONT = pygame.font.Font(os.path.join('fonts', 'JustMyType-KePl.ttf'), 60)
@@ -69,7 +67,7 @@ DIF_MAP = {
 }
 
 
-def start(user_name, mode, num_of_players, player_keys):
+def start(user_name, mode, num_of_players, player_info):
     WIDTH, HEIGHT = 1000 if num_of_players == 1 else 1500, 800
     PLAYER_POSITION_X, PLAYER_POSITION_Y = WIDTH / 2 - 50, HEIGHT - 120
 
@@ -77,7 +75,7 @@ def start(user_name, mode, num_of_players, player_keys):
     WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 
     # Background
-    BG = pygame.transform.scale(pygame.image.load(os.path.join('assets', 'background-black.png')), (WIDTH, HEIGHT))
+    BG = pygame.transform.scale(pygame.image.load(os.path.join('assets', 'space.png')), (WIDTH, HEIGHT))
 
     # Make the game stays consistent on any device
     clock = pygame.time.Clock()
@@ -88,8 +86,8 @@ def start(user_name, mode, num_of_players, player_keys):
     Scroll_bg = 0
     begin_count = 0
 
-    level = 0  # player[i] start level
-    lives = 5  # player[i] start lives
+    level = 0  # player start level
+    lives = 5  # player start lives
 
     gifts = []
     player_gift = {
@@ -101,15 +99,14 @@ def start(user_name, mode, num_of_players, player_keys):
     # Set the number and velocity of the enemies
     enemies = []
     dead_enemies = []
-    wave_length = int(dif/2 + 3) * num_of_players
-    enemy_vel = 0.9 + (dif/100)
+    wave_length = int(dif / 2 + 3) * num_of_players
+    enemy_vel = 0.9 + (dif / 100)
 
-
-    # Make player[i] instance start in position
+    # Create player instance
     player = []
-    player.append(Player(PLAYER_POSITION_X + 250 - 250*num_of_players, PLAYER_POSITION_Y, PLAYER_VEL, 'yellow'))
+    player.append(Player(PLAYER_POSITION_X + 250 - 250 * num_of_players, PLAYER_POSITION_Y, PLAYER_VEL, player_info[0]['color']))
     if num_of_players == 2:
-        player.append(Player(PLAYER_POSITION_X + 250, PLAYER_POSITION_Y, PLAYER_VEL, 'white'))
+        player.append(Player(PLAYER_POSITION_X + 250, PLAYER_POSITION_Y, PLAYER_VEL, player_info[0]['color']))
 
     lost = False
     level_up = False
@@ -120,11 +117,11 @@ def start(user_name, mode, num_of_players, player_keys):
 
     def activate_player(i):
         # Pressed keys
-        left_key = player_keys[i]['left']
-        right_key = player_keys[i]['right']
-        up_key = player_keys[i]['up']
-        down_key = player_keys[i]['down']
-        shoot_key = player_keys[i]['shoot']
+        left_key = player_info[i]['left']
+        right_key = player_info[i]['right']
+        up_key = player_info[i]['up']
+        down_key = player_info[i]['down']
+        shoot_key = player_info[i]['shoot']
 
         # Control the pressed keys
         keys = pygame.key.get_pressed()
@@ -161,7 +158,7 @@ def start(user_name, mode, num_of_players, player_keys):
             enemy.move_lasers(player, HEIGHT)
 
             # Set probability this enemy will shoot on the player depend on the difficulty
-            if random.randrange(0, int(3 * FPS / (1 + dif/30))) == 1:
+            if random.randrange(0, int(3 * FPS / (1 + dif / 30))) == 1:
                 enemy.shoot()
 
             # The enemy collided with the player[i]
@@ -183,7 +180,6 @@ def start(user_name, mode, num_of_players, player_keys):
                     # player_gift = []
                     lives -= 1
                     enemies.remove(enemy)
-
 
     def activate_lasers():
         # Activate all the lasers of the player[i]
@@ -233,9 +229,9 @@ def start(user_name, mode, num_of_players, player_keys):
     def activate_new_level():
         nonlocal level, wave_length, enemy_vel, lives, level_up, level_count, dif
         level += 1
-        wave_length += 1 + int(dif/2)*num_of_players
+        wave_length += 1 + int(dif / 2) * num_of_players
         # increase enemy velocity every level till some limit, depend on the difficulty
-        enemy_vel = min(enemy_vel + (enemy_vel * (0.1 / level)), 1.5 + (dif/20))
+        enemy_vel = min(enemy_vel + (enemy_vel * (0.1 / level)), 1.5 + (dif / 20))
 
         # After every 5 levels the player[i] get extra lives and health
         if level % 5 == 0:
@@ -252,16 +248,16 @@ def start(user_name, mode, num_of_players, player_keys):
             enemy_random_pos_x = random.randrange(30, WIDTH - 80)
             if level == 1:
                 # More time for the player[i] to read the instructions
-                enemy_random_pos_y = random.randrange(-1800, -700 - 20*dif)
+                enemy_random_pos_y = random.randrange(-1800, -700 - 20 * dif)
             else:
                 enemy_random_pos_y = random.randrange(max(-2500, -1500 - (level * (50 + dif))), - 100)
             random_color = random.choice(['red', 'blue', 'green'])
 
-            rnd_factor = random.uniform(0.8, 1 + (dif/25))
+            rnd_factor = random.uniform(0.8, 1 + (dif / 25))
             enemy = Enemy(enemy_random_pos_x, enemy_random_pos_y, random_color, enemy_vel * rnd_factor)
             enemies.append(enemy)
 
-        random_gift = random.choice(['automatic','arrow', 'more_speed', 'more_shooter', 'health', 'life'])
+        random_gift = random.choice(['automatic', 'arrow', 'more_speed', 'more_shooter', 'health', 'life'])
         gift_random_pos_x = random.randrange(30, WIDTH - 80)
         gift_random_pos_y = random.randrange(-1500, -400)
         gift = Gift(gift_random_pos_x, gift_random_pos_y, enemy_vel, random_gift)
@@ -269,6 +265,7 @@ def start(user_name, mode, num_of_players, player_keys):
 
     def redraw_window(y):
 
+        # scrolling background depend on y
         rel_y = y % HEIGHT
         WIN.blit(BG, (0, rel_y))
         WIN.blit(BG, (0, rel_y - HEIGHT))
@@ -277,12 +274,14 @@ def start(user_name, mode, num_of_players, player_keys):
         for enemy in enemies:
             enemy.draw(WIN)
 
+        # draw enemies lasers
         for enemy in dead_enemies[:]:
             if len(enemy.lasers) == 0:
                 dead_enemies.remove(enemy)
             else:
                 enemy.draw_lasers(WIN)
 
+        # draw active gifts
         for gift in gifts:
             gift.draw(WIN)
 
@@ -298,9 +297,10 @@ def start(user_name, mode, num_of_players, player_keys):
             middle_of_screen = int(WIDTH / 2 - dif_label.get_width() / 2)
             WIN.blit(dif_label, (middle_of_screen, int(HEIGHT / 2 + 50)))  # Display label in the middle
 
-            ins_label = SMALL_FONT.render("Use the arrows to move and space to shoot", 1, WHITE)  # Create instructions label
+            ins_label = SMALL_FONT.render("Use the arrows to move and space to shoot", 1,
+                                          WHITE)  # Create instructions label
             middle_of_screen = int(WIDTH / 2 - ins_label.get_width() / 2)
-            WIN.blit(ins_label, (middle_of_screen, int(HEIGHT / 2 +100)))  # Display label in the middle
+            WIN.blit(ins_label, (middle_of_screen, int(HEIGHT / 2 + 100)))  # Display label in the middle
 
         # Display the current level on the screen
         elif level_up:
@@ -333,7 +333,7 @@ def start(user_name, mode, num_of_players, player_keys):
                 just_begin = False
             else:
                 begin_count += 1
-                Scroll_bg +=2
+                Scroll_bg += 2
         else:
             # Check if the player[i] lost
             for i in range(len(player)):

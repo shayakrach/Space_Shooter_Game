@@ -54,7 +54,7 @@ KEYS = {
     'sp': pygame.K_SPACE
 }
 '''
-player = {
+player_info = {
         0: {
             'left': pygame.K_LEFT,
             'right': pygame.K_RIGHT,
@@ -72,7 +72,6 @@ player = {
             'color': 'white'
         }
     }
-
 
 rect_width = 150
 rect_height = 150
@@ -98,7 +97,7 @@ def draw_main_menu():
 
     middle_height = int(HEIGHT / 2 - 50)
 
-    def draw_rect(rect, text, font, border, fix_x, fix_y, color=WHITE):
+    def draw_rect(rect, text, font, border, fix_x, fix_y, color = WHITE):
         pygame.draw.rect(WIN, color, rect, border)
         label = font.render(text, 1, color)  # Create hard label
         WIN.blit(label, (rect.x + fix_x, rect.y + fix_y))  # Display label in the middle
@@ -130,7 +129,7 @@ def draw_main_menu():
 
 
 def main_menu():
-    global user_text, num_of_players, player_keys
+    global user_text, num_of_players, player_info
     run = True
     mode = None
 
@@ -155,16 +154,16 @@ def main_menu():
                     if hard_rect.collidepoint(event.pos):
                         mode = 'hard'
                     if mode is not None:
-                        score = Game.start(user_text, mode, num_of_players, player)
+                        score = Game.start(user_text, mode, num_of_players, player_info)
                         if score != 0:
                             records.add_to_db(user_text, mode, score)
-                            run = secondary_menu.menu(user_text, score, mode, num_of_players, player)
+                            run = secondary_menu.menu(user_text, score, mode, num_of_players, player_info)
                         mode = None
                 if records_rect.collidepoint(event.pos):
                     run = records.records_table()
                     mode = None
                 if settings_rect.collidepoint(event.pos):
-                    run, num_of_players, player_keys = settings.main(num_of_players, player)
+                    run, num_of_players, player_info = settings.main(num_of_players, player_info)
                     mode = None
             if event.type == pygame.KEYDOWN:
                 if len(user_text) < 20:
